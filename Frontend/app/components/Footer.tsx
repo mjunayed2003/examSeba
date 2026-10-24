@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import {
   FaPhone,
   FaEnvelope,
@@ -114,6 +115,22 @@ export default function Footer({ onNavClick }: FooterProps) {
                 >
                   {t.nav.leaderboard}
                 </button>
+              </li>
+              <li className="pt-2 border-t border-slate-800">
+                <Link href="/login" className="hover:text-blue-400 transition-colors">
+                  {t.nav.login}
+                </Link>
+              </li>
+              <li>
+                <Link href="/register" className="hover:text-blue-400 transition-colors">
+                  {t.nav.signup}
+                </Link>
+              </li>
+              <li>
+                <Link href="/admin" className="text-amber-400 hover:text-amber-300 transition-colors font-bold flex items-center gap-1">
+                  <span>🛡️</span>
+                  <span>{isBn ? 'অ্যাডমিন প্যানেল' : 'Admin Panel'}</span>
+                </Link>
               </li>
             </ul>
           </div>

@@ -226,6 +226,28 @@ export interface Translations {
     continueExam: string;
     confirmSubmit: string;
   };
+  admin: {
+    portalTitle: string;
+    superAdmin: string;
+    overview: string;
+    exams: string;
+    questions: string;
+    students: string;
+    notices: string;
+    settings: string;
+    totalStudents: string;
+    activeExams: string;
+    questionBankCount: string;
+    dailySubmissions: string;
+    todayRevenue: string;
+    createExamBtn: string;
+    addQuestionBtn: string;
+    postNoticeBtn: string;
+    backToSite: string;
+    logout: string;
+    adminLoginTitle: string;
+    adminLoginDesc: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -455,6 +477,28 @@ export const translations: Record<Language, Translations> = {
       continueExam: 'পরীক্ষা চালিয়ে যান',
       confirmSubmit: 'হ্যাঁ, নিশ্চিত জমা দিন',
     },
+    admin: {
+      portalTitle: 'এক্সাম সেবা অ্যাডমিন কন্ট্রোল',
+      superAdmin: 'সুপার অ্যাডমিনিস্ট্রেটর',
+      overview: 'ওভারভিউ',
+      exams: 'পরীক্ষা ব্যবস্থাপনা',
+      questions: 'প্রশ্নব্যাংক',
+      students: 'শিক্ষার্থী ও এনরোলমেন্ট',
+      notices: 'নোটিশ ও সার্কুলার',
+      settings: 'সিস্টেম সেটিংস',
+      totalStudents: 'মোট পরীক্ষার্থী',
+      activeExams: 'সক্রিয় লাইভ এক্সাম',
+      questionBankCount: 'প্রশ্নব্যাংক সংখ্যা',
+      dailySubmissions: 'দৈনিক পরীক্ষা সাবমিশন',
+      todayRevenue: 'আজকের রেভিনিউ',
+      createExamBtn: 'নতুন পরীক্ষা তৈরি করুন',
+      addQuestionBtn: 'প্রশ্ন যুক্ত করুন',
+      postNoticeBtn: 'জরুরি নোটিশ দিন',
+      backToSite: 'মূল সাইটে যান',
+      logout: 'লগআউট',
+      adminLoginTitle: 'এক্সাম সেবা অ্যাডমিন পোর্টাল',
+      adminLoginDesc: 'নিরাপদ অ্যাডমিন অ্যাক্সেসের জন্য আপনার ক্রেডেনশিয়াল প্রদান করুন',
+    },
   },
   en: {
     nav: {
@@ -681,6 +725,28 @@ export const translations: Record<Language, Translations> = {
       confirmText: 'questions answered. Questions remaining:',
       continueExam: 'Continue Exam',
       confirmSubmit: 'Yes, Submit Exam',
+    },
+    admin: {
+      portalTitle: 'Exam Seba Admin Control',
+      superAdmin: 'Super Administrator',
+      overview: 'Overview',
+      exams: 'Exam Management',
+      questions: 'Question Bank',
+      students: 'Students & Enrolments',
+      notices: 'Notices & Circulars',
+      settings: 'System Settings',
+      totalStudents: 'Total Students',
+      activeExams: 'Active Live Exams',
+      questionBankCount: 'Questions in Bank',
+      dailySubmissions: 'Daily Submissions',
+      todayRevenue: "Today's Revenue",
+      createExamBtn: 'Create New Exam',
+      addQuestionBtn: 'Add Question',
+      postNoticeBtn: 'Post Notice',
+      backToSite: 'View Public Site',
+      logout: 'Logout',
+      adminLoginTitle: 'Exam Seba Admin Portal',
+      adminLoginDesc: 'Enter your credentials to securely access the management console',
     },
   },
 };

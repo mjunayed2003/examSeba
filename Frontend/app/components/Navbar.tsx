@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import {
   FaFire,
   FaSignOutAlt,
-  FaUserCircle
+  FaUserCircle,
+  FaUserShield,
 } from 'react-icons/fa';
 import { HiBars3 } from 'react-icons/hi2';
 import { IoClose } from 'react-icons/io5';
@@ -13,7 +15,7 @@ import { useLanguage } from '../context/LanguageContext';
 
 interface NavbarProps {
   onOpenExamModal: (examId?: string) => void;
-  onOpenAuthModal: (mode: 'login' | 'signup') => void;
+  onOpenAuthModal?: (mode: 'login' | 'signup') => void;
   onOpenDashboard: () => void;
   currentUser: { name: string; phone: string; batch: string } | null;
   onLogout: () => void;
@@ -23,7 +25,6 @@ interface NavbarProps {
 
 export default function Navbar({
   onOpenExamModal,
-  onOpenAuthModal,
   onOpenDashboard,
   currentUser,
   onLogout,
@@ -176,6 +177,15 @@ export default function Navbar({
                         <span>{t.nav.dashboardBtn}</span>
                       </button>
 
+                      <Link
+                        href="/admin"
+                        onClick={() => setProfileDropdownOpen(false)}
+                        className="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-amber-50 hover:text-amber-800 flex items-center gap-2 font-medium"
+                      >
+                        <FaUserShield className="w-4 h-4 text-amber-500" />
+                        <span>{lang === 'bn' ? 'অ্যাডমিন প্যানেল' : 'Admin Panel'}</span>
+                      </Link>
+
                       <button
                         onClick={() => {
                           setProfileDropdownOpen(false);
@@ -191,18 +201,18 @@ export default function Navbar({
                 </div>
               ) : (
                 <div className="flex items-center gap-1.5">
-                  <button
-                    onClick={() => onOpenAuthModal('login')}
+                  <Link
+                    href="/login"
                     className="px-3 py-1.5 text-xs font-bold text-white hover:text-blue-100 transition-colors"
                   >
                     {t.nav.login}
-                  </button>
-                  <button
-                    onClick={() => onOpenAuthModal('signup')}
+                  </Link>
+                  <Link
+                    href="/register"
                     className="px-3.5 py-1.5 text-xs font-bold bg-white text-[#007bff] hover:bg-blue-50 rounded-lg shadow-sm transition-all"
                   >
                     {t.nav.signup}
-                  </button>
+                  </Link>
                 </div>
               )}
 
@@ -250,36 +260,42 @@ export default function Navbar({
             <div>
               <p className="font-bold text-sm">{currentUser.name}</p>
               <p className="text-xs text-blue-100">{currentUser.phone}</p>
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenDashboard();
-                }}
-                className="mt-2 text-xs bg-white text-[#007bff] px-3 py-1 rounded-md font-bold inline-block"
-              >
-                {t.nav.dashboardBtn}
-              </button>
+              <div className="flex items-center gap-2 mt-2">
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenDashboard();
+                  }}
+                  className="text-xs bg-white text-[#007bff] px-3 py-1 rounded-md font-bold inline-block"
+                >
+                  {t.nav.dashboardBtn}
+                </button>
+                <Link
+                  href="/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-xs bg-amber-400 text-slate-950 px-2.5 py-1 rounded-md font-bold inline-flex items-center gap-1"
+                >
+                  <FaUserShield className="w-3 h-3" />
+                  <span>Admin</span>
+                </Link>
+              </div>
             </div>
           ) : (
             <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenAuthModal('login');
-                }}
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
                 className="flex-1 py-1.5 bg-white text-[#007bff] text-xs font-bold rounded-lg text-center"
               >
                 {t.nav.login}
-              </button>
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenAuthModal('signup');
-                }}
+              </Link>
+              <Link
+                href="/register"
+                onClick={() => setMobileMenuOpen(false)}
                 className="flex-1 py-1.5 bg-blue-600 border border-white/30 text-white text-xs font-bold rounded-lg text-center"
               >
                 {t.nav.signup}
-              </button>
+              </Link>
             </div>
           )}
         </div>

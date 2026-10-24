@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
 import StatsSection from './components/StatsSection';
@@ -45,6 +45,22 @@ export default function Home() {
     phone: '01712345678',
     batch: '৪৭তম বিসিএস বুলেট ব্যাচ',
   });
+
+  useEffect(() => {
+    const syncUser = () => {
+      try {
+        const saved = localStorage.getItem('exam_seba_user');
+        if (saved) {
+          setCurrentUser(JSON.parse(saved));
+        }
+      } catch {
+        // ignore
+      }
+    };
+    syncUser();
+    window.addEventListener('exam_seba_auth_change', syncUser);
+    return () => window.removeEventListener('exam_seba_auth_change', syncUser);
+  }, []);
 
   // Student Dashboard Modal State
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
