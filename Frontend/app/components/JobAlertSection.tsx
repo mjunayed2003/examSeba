@@ -2,16 +2,10 @@
 
 import React, { useState } from 'react';
 import {
-  Bell,
-  Briefcase,
   Calendar,
   Building,
-  GraduationCap,
   ExternalLink,
-  ChevronRight,
-  Sparkles,
-  AlertCircle,
-  FileText
+  ChevronRight
 } from 'lucide-react';
 import { SAMPLE_JOBS, JobCircular } from '../data/examData';
 

@@ -1,0 +1,11 @@
+{
+  "name": "exam-sheba",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix Frontend run dev",
+    "build": "npm --prefix Frontend run build",
+    "start": "npm --prefix Frontend start",
+    "lint": "npm --prefix Frontend run lint"
+  }
+}

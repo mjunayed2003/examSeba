@@ -2,15 +2,11 @@
 
 import React, { useState } from 'react';
 import {
-  BookOpen,
   Download,
   Flame,
-  CheckCircle,
   FileText,
   Clock,
   Sparkles,
-  ArrowRight,
-  Eye,
   Check
 } from 'lucide-react';
 import { FREE_STUDY_MATERIALS, SAMPLE_EXAMS, Exam } from '../data/examData';
@@ -21,7 +17,6 @@ interface DailyFreeExamSectionProps {
 
 export default function DailyFreeExamSection({ onStartExam }: DailyFreeExamSectionProps) {
   const [downloadedIds, setDownloadedIds] = useState<Record<string, boolean>>({});
-  const [activeMaterialPreview, setActiveMaterialPreview] = useState<any | null>(null);
 
   const handleDownload = (id: string, title: string) => {
     setDownloadedIds((prev) => ({ ...prev, [id]: true }));

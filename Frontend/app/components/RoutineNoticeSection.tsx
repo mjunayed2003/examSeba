@@ -4,14 +4,9 @@ import React, { useState } from 'react';
 import {
   Calendar,
   Bell,
-  Clock,
-  FileCheck,
-  AlertCircle,
-  ChevronRight,
-  Flame,
-  ArrowRight
+  Clock
 } from 'lucide-react';
-import { SAMPLE_NOTICES, Notice, Exam } from '../data/examData';
+import { SAMPLE_NOTICES, Notice } from '../data/examData';
 
 interface RoutineNoticeSectionProps {
   onStartExam: () => void;

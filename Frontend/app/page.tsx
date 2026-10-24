@@ -159,6 +159,7 @@ export default function Home() {
 
       {/* Interactive Live Exam Runner Modal (Biddabari's flagship feature) */}
       <LiveExamModal
+        key={activeExam ? activeExam.id : 'exam'}
         exam={activeExam}
         isOpen={isExamModalOpen}
         onClose={() => setIsExamModalOpen(false)}
@@ -172,6 +173,7 @@ export default function Home() {
 
       {/* Authentication Modal */}
       <AuthModal
+        key={`${authModalMode}-${isAuthModalOpen}`}
         isOpen={isAuthModalOpen}
         initialMode={authModalMode}
         onClose={() => setIsAuthModalOpen(false)}

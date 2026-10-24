@@ -7,9 +7,7 @@ import {
   Lock,
   Phone,
   GraduationCap,
-  Sparkles,
-  ArrowRight,
-  CheckCircle2
+  Sparkles
 } from 'lucide-react';
 
 interface AuthModalProps {
@@ -25,13 +23,13 @@ export default function AuthModal({
   onClose,
   onLoginSuccess,
 }: AuthModalProps) {
-  if (!isOpen) return null;
-
   const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [batch, setBatch] = useState('৪৭তম বিসিএস বুলেট ব্যাচ');
+
+  if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,14 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import {
   ShoppingBag,
-  BookOpen,
   CheckCircle,
   Truck,
-  Sparkles,
-  ArrowRight,
-  ShieldCheck,
   Check
 } from 'lucide-react';
 import { SAMPLE_BOOKS, Book } from '../data/examData';
@@ -60,12 +57,14 @@ export default function BookStoreSection() {
               >
                 <div>
                   <div className="h-56 overflow-hidden bg-slate-100 relative">
-                    <img
+                    <Image
                       src={book.coverImage}
                       alt={book.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute top-2.5 left-2.5 bg-blue-600 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow">
+                    <div className="absolute top-2.5 left-2.5 bg-blue-600 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow z-10">
                       {book.edition}
                     </div>
                   </div>
@@ -139,9 +138,11 @@ export default function BookStoreSection() {
                   </div>
 
                   <div className="flex items-center gap-3 mb-4 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                    <img
+                    <Image
                       src={selectedBookForOrder.coverImage}
                       alt={selectedBookForOrder.title}
+                      width={48}
+                      height={64}
                       className="w-12 h-16 object-cover rounded-md shadow-sm"
                     />
                     <div>

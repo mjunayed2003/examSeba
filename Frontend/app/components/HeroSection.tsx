@@ -1,12 +1,12 @@
 'use client';
 
 import React from 'react';
-import { PlayCircle, Award, CheckCircle, ShieldCheck, Sparkles, Flame, Users, BookOpen } from 'lucide-react';
+import { PlayCircle, Award, Sparkles } from 'lucide-react';
 
 interface HeroSectionProps {
   onStartExam: () => void;
   onOpenDemo: () => void;
-  onOpenAuth: () => void;
+  onOpenAuth?: () => void;
 }
 
 export default function HeroSection({
@@ -54,6 +54,16 @@ export default function HeroSection({
             <Award className="w-5 h-5 text-white" />
             <span>ফ্রি ডেমো মডেল টেস্ট</span>
           </button>
+
+          {onOpenAuth && (
+            <button
+              onClick={onOpenAuth}
+              className="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold text-sm transition-all hover:scale-105"
+              id="hero-auth-btn"
+            >
+              <span>নতুন একাউন্ট খুলুন</span>
+            </button>
+          )}
 
         </div>
 

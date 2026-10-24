@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Rocket, PlayCircle, Sparkles } from 'lucide-react';
+import { Rocket, PlayCircle } from 'lucide-react';
 
 interface CtaSectionProps {
   onStartExam: () => void;

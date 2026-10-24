@@ -1,24 +1,20 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   X,
   Clock,
-  CheckCircle2,
   AlertCircle,
   HelpCircle,
   ArrowRight,
   ArrowLeft,
   RotateCcw,
   Award,
-  ChevronRight,
   Trophy,
   BookOpen,
-  Share2,
-  ShieldAlert,
   Flag
 } from 'lucide-react';
-import { Exam, Question } from '../data/examData';
+import { Exam } from '../data/examData';
 
 interface LiveExamModalProps {
   exam: Exam | null;
@@ -50,77 +46,16 @@ export default function LiveExamModal({
   onViewLeaderboard,
   onSaveResult,
 }: LiveExamModalProps) {
-  if (!isOpen || !exam) return null;
-
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
   const [flaggedQuestions, setFlaggedQuestions] = useState<Record<number, boolean>>({});
-  const [timeLeft, setTimeLeft] = useState(exam.durationMinutes * 60);
+  const [timeLeft, setTimeLeft] = useState(exam ? exam.durationMinutes * 60 : 0);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showConfirmSubmit, setShowConfirmSubmit] = useState(false);
   const [result, setResult] = useState<ExamResult | null>(null);
-  const [activeTab, setActiveTab] = useState<'solution' | 'summary'>('summary');
 
-  // Reset state when exam opens
-  useEffect(() => {
-    setTimeLeft(exam.durationMinutes * 60);
-    setSelectedAnswers({});
-    setFlaggedQuestions({});
-    setCurrentQuestionIndex(0);
-    setIsSubmitted(false);
-    setShowConfirmSubmit(false);
-    setResult(null);
-  }, [exam]);
-
-  // Live Timer Countdown
-  useEffect(() => {
-    if (isSubmitted) return;
-
-    if (timeLeft <= 0) {
-      handleSubmitExam();
-      return;
-    }
-
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [timeLeft, isSubmitted]);
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const currentQ = exam.questions[currentQuestionIndex];
-
-  const handleSelectOption = (optionIndex: number) => {
-    if (isSubmitted) return;
-    setSelectedAnswers((prev) => ({
-      ...prev,
-      [currentQ.id]: optionIndex,
-    }));
-  };
-
-  const handleClearOption = () => {
-    if (isSubmitted) return;
-    setSelectedAnswers((prev) => {
-      const copy = { ...prev };
-      delete copy[currentQ.id];
-      return copy;
-    });
-  };
-
-  const handleToggleFlag = () => {
-    setFlaggedQuestions((prev) => ({
-      ...prev,
-      [currentQ.id]: !prev[currentQ.id],
-    }));
-  };
-
-  const handleSubmitExam = () => {
+  const handleSubmitExam = useCallback(() => {
+    if (!exam) return;
     setShowConfirmSubmit(false);
     setIsSubmitted(true);
 
@@ -163,6 +98,63 @@ export default function LiveExamModal({
     if (onSaveResult) {
       onSaveResult(calculatedResult);
     }
+  }, [exam, selectedAnswers, timeLeft, onSaveResult]);
+
+  const handleSubmitExamRef = React.useRef(handleSubmitExam);
+  useEffect(() => {
+    handleSubmitExamRef.current = handleSubmitExam;
+  }, [handleSubmitExam]);
+
+  // Live Timer Countdown
+  useEffect(() => {
+    if (!isOpen || !exam || isSubmitted) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          handleSubmitExamRef.current();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isOpen, exam, isSubmitted]);
+
+  if (!isOpen || !exam) return null;
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const currentQ = exam.questions[currentQuestionIndex];
+
+  const handleSelectOption = (optionIndex: number) => {
+    if (isSubmitted) return;
+    setSelectedAnswers((prev) => ({
+      ...prev,
+      [currentQ.id]: optionIndex,
+    }));
+  };
+
+  const handleClearOption = () => {
+    if (isSubmitted) return;
+    setSelectedAnswers((prev) => {
+      const copy = { ...prev };
+      delete copy[currentQ.id];
+      return copy;
+    });
+  };
+
+  const handleToggleFlag = () => {
+    setFlaggedQuestions((prev) => ({
+      ...prev,
+      [currentQ.id]: !prev[currentQ.id],
+    }));
   };
 
   const handleRetake = () => {

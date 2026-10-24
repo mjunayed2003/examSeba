@@ -1,18 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import {
   GraduationCap,
-  Users,
-  Video,
-  FileText,
-  Calendar,
   CheckCircle2,
-  Sparkles,
   ArrowRight,
-  X,
-  PhoneCall,
-  Clock
+  X
 } from 'lucide-react';
 import { SAMPLE_COURSES, Course } from '../data/examData';
 
@@ -77,15 +71,17 @@ export default function CourseCatalogSection({ onEnrollCourse }: CourseCatalogSe
             >
               {/* Card Banner Image */}
               <div className="relative h-48 overflow-hidden bg-slate-100">
-                <img
+                <Image
                   src={course.bannerImage}
                   alt={course.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute top-3 left-3 bg-[#007bff] text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md">
+                <div className="absolute top-3 left-3 bg-[#007bff] text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md z-10">
                   {course.badge}
                 </div>
-                <div className="absolute top-3 right-3 bg-white/95 text-slate-800 text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md backdrop-blur-sm">
+                <div className="absolute top-3 right-3 bg-white/95 text-slate-800 text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md backdrop-blur-sm z-10">
                   {course.tag}
                 </div>
               </div>

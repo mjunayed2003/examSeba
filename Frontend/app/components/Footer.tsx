@@ -6,11 +6,7 @@ import {
   Phone,
   Mail,
   MapPin,
-  Send,
-  Heart,
-  ShieldCheck,
-  Globe,
-  Share2
+  Send
 } from 'lucide-react';
 
 interface FooterProps {

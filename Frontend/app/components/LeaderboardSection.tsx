@@ -1,23 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import {
-  Trophy,
-  Medal,
-  Flame,
-  Clock,
-  CheckCircle2,
-  Filter,
-  User,
-  Sparkles
+  Trophy
 } from 'lucide-react';
-import { SAMPLE_LEADERBOARD, LeaderboardEntry } from '../data/examData';
+import { SAMPLE_LEADERBOARD } from '../data/examData';
 
 interface LeaderboardSectionProps {
-  userResult?: any;
+  userResult?: unknown;
 }
 
-export default function LeaderboardSection({ userResult }: LeaderboardSectionProps) {
+export default function LeaderboardSection({}: LeaderboardSectionProps) {
   const [selectedBatch, setSelectedBatch] = useState<string>('all');
 
   const batches = [
@@ -78,9 +72,11 @@ export default function LeaderboardSection({ userResult }: LeaderboardSectionPro
               <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 font-black flex items-center justify-center text-sm mb-2">
                 ২
               </div>
-              <img
+              <Image
                 src={filteredEntries[1].avatar}
                 alt={filteredEntries[1].studentName}
+                width={64}
+                height={64}
                 className="w-16 h-16 rounded-full object-cover border-2 border-slate-300 mb-2 shadow"
               />
               <h4 className="font-bold text-slate-800 text-sm">{filteredEntries[1].studentName}</h4>
@@ -97,9 +93,11 @@ export default function LeaderboardSection({ userResult }: LeaderboardSectionPro
                 <Trophy className="w-3.5 h-3.5" />
                 <span>১ম স্থান (টপার)</span>
               </div>
-              <img
+              <Image
                 src={filteredEntries[0].avatar}
                 alt={filteredEntries[0].studentName}
+                width={80}
+                height={80}
                 className="w-20 h-20 rounded-full object-cover border-4 border-amber-400 mb-2 shadow-md mt-2"
               />
               <h4 className="font-extrabold text-slate-900 text-base">{filteredEntries[0].studentName}</h4>
@@ -115,9 +113,11 @@ export default function LeaderboardSection({ userResult }: LeaderboardSectionPro
               <div className="w-8 h-8 rounded-full bg-amber-700/20 text-amber-900 font-black flex items-center justify-center text-sm mb-2">
                 ৩
               </div>
-              <img
+              <Image
                 src={filteredEntries[2].avatar}
                 alt={filteredEntries[2].studentName}
+                width={64}
+                height={64}
                 className="w-16 h-16 rounded-full object-cover border-2 border-amber-600/40 mb-2 shadow"
               />
               <h4 className="font-bold text-slate-800 text-sm">{filteredEntries[2].studentName}</h4>
@@ -162,9 +162,11 @@ export default function LeaderboardSection({ userResult }: LeaderboardSectionPro
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2.5">
-                        <img
+                        <Image
                           src={entry.avatar}
                           alt={entry.studentName}
+                          width={32}
+                          height={32}
                           className="w-8 h-8 rounded-full object-cover border border-slate-200"
                         />
                         <span className="font-bold text-slate-800">{entry.studentName}</span>

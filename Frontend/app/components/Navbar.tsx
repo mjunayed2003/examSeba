@@ -9,14 +9,11 @@ import {
   BookOpen,
   Award,
   Bell,
-  Search,
-  LogIn,
   LogOut,
   Calendar,
   Layers,
   ShoppingBag,
-  Flame,
-  CheckCircle2
+  Flame
 } from 'lucide-react';
 
 interface NavbarProps {

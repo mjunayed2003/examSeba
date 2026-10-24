@@ -3,15 +3,9 @@
 import React from 'react';
 import {
   X,
-  User,
-  Award,
-  CheckCircle2,
-  Clock,
-  BookOpen,
   Trophy,
   Flame,
   FileCheck,
-  TrendingUp,
   LogOut
 } from 'lucide-react';
 

@@ -9,10 +9,7 @@ import {
   Layers,
   Landmark,
   ArrowRight,
-  Flame,
-  Clock,
-  HelpCircle,
-  FileCheck
+  Flame
 } from 'lucide-react';
 import { SAMPLE_EXAMS, Exam } from '../data/examData';
 
