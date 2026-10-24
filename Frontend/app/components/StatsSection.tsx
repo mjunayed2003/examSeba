@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Users, BookCheck, BookOpen, Trophy } from 'lucide-react';
+import { FaUsers, FaClipboardCheck, FaBookOpen, FaTrophy } from 'react-icons/fa';
 
 export default function StatsSection() {
   const [counts, setCounts] = useState({
@@ -46,22 +46,22 @@ export default function StatsSection() {
 
   const stats = [
     {
-      icon: Users,
+      icon: FaUsers,
       value: counts.students.toLocaleString('en-US') + '+',
       label: 'সফল শিক্ষার্থী',
     },
     {
-      icon: BookCheck,
+      icon: FaClipboardCheck,
       value: counts.exams.toLocaleString('en-US') + '+',
       label: 'বিভিন্ন পরীক্ষা',
     },
     {
-      icon: BookOpen,
+      icon: FaBookOpen,
       value: counts.courses.toLocaleString('en-US') + '+',
       label: 'বিষয়ভিত্তিক কোর্স',
     },
     {
-      icon: Trophy,
+      icon: FaTrophy,
       value: counts.successRate + '%',
       label: 'সাফল্যের হার',
     },

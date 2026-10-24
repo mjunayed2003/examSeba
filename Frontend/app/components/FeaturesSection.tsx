@@ -2,48 +2,48 @@
 
 import React from 'react';
 import {
-  Radio,
-  CheckCircle2,
-  Lightbulb,
-  Gauge,
-  Trophy,
-  TrendingUp
-} from 'lucide-react';
+  FaCheckCircle,
+  FaLightbulb,
+  FaTachometerAlt,
+  FaTrophy,
+  FaChartLine,
+  FaBroadcastTower
+} from 'react-icons/fa';
 
 export default function FeaturesSection() {
   const features = [
     {
-      icon: Radio,
+      icon: FaBroadcastTower,
       title: 'লাইভ এক্সাম',
       description:
         'রিয়েল টাইমে পরীক্ষা দিন এবং তাৎক্ষণিক ফলাফল পান। আমাদের লাইভ এক্সাম সিস্টেম আপনাকে প্রকৃত পরীক্ষার অভিজ্ঞতা দেবে।',
     },
     {
-      icon: CheckCircle2,
+      icon: FaCheckCircle,
       title: 'সঠিক উত্তর ভুল উত্তর মার্কিং',
       description:
         'স্বয়ংক্রিয় মার্কিং সিস্টেম যা তাৎক্ষণিকভাবে আপনার সঠিক ও ভুল উত্তর চিহ্নিত করে এবং নম্বর প্রদান করে।',
     },
     {
-      icon: Lightbulb,
+      icon: FaLightbulb,
       title: 'বিস্তারিত ব্যাখ্যা',
       description:
         'প্রতিটি প্রশ্নের জন্য বিস্তারিত ব্যাখ্যা এবং সমাধান পান। আপনার ভুলগুলো থেকে শিখুন এবং উন্নতি করুন।',
     },
     {
-      icon: Gauge,
+      icon: FaTachometerAlt,
       title: 'লাইভ স্কোরবোর্ড',
       description:
         'পরীক্ষার সময় রিয়েল টাইমে আপনার স্কোর এবং অগ্রগতি দেখুন। লাইভ আপডেট পেতে থাকুন।',
     },
     {
-      icon: Trophy,
+      icon: FaTrophy,
       title: 'লিডারবোর্ড',
       description:
         'অন্য পরীক্ষার্থীদের সাথে আপনার অবস্থান তুলনা করুন। র‍্যাঙ্কিং সিস্টেমে আপনার অবস্থান জানুন।',
     },
     {
-      icon: TrendingUp,
+      icon: FaChartLine,
       title: 'অগ্রগতি ট্র্যাকিং',
       description:
         'আপনার পারফরম্যান্স ট্র্যাক করুন এবং উন্নতির ক্ষেত্রগুলো চিহ্নিত করুন। বিস্তারিত রিপোর্ট ও বিশ্লেষণ পান।',

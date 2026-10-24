@@ -1,11 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  Calendar,
-  Bell,
-  Clock
-} from 'lucide-react';
+import { FaCalendarDays, FaBell, FaRegClock } from 'react-icons/fa6';
+import { IoClose } from 'react-icons/io5';
 import { SAMPLE_NOTICES, Notice } from '../data/examData';
 
 interface RoutineNoticeSectionProps {
@@ -70,7 +67,7 @@ export default function RoutineNoticeSection({ onStartExam }: RoutineNoticeSecti
           <div className="lg:col-span-8 bg-slate-50 rounded-2xl p-6 border border-slate-200">
             <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center justify-between">
               <span className="flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-[#007bff]" />
+                <FaCalendarDays className="w-4 h-4 text-[#007bff]" />
                 <span>আসন্ন মডেল টেস্টের রুটিন</span>
               </span>
               <span className="text-xs text-slate-500 font-normal">রিয়েল-টাইম আপডেট</span>
@@ -95,12 +92,12 @@ export default function RoutineNoticeSection({ onStartExam }: RoutineNoticeSecti
                     <h4 className="font-bold text-slate-800 text-sm mb-1">{item.topic}</h4>
 
                     <div className="flex items-center gap-4 text-xs text-slate-500">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                      <span className="flex items-center gap-1.5">
+                        <FaCalendarDays className="w-3 h-3 text-slate-400" />
                         <span>{item.date}</span>
                       </span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5 text-slate-400" />
+                      <span className="flex items-center gap-1.5">
+                        <FaRegClock className="w-3 h-3 text-slate-400" />
                         <span>{item.time}</span>
                       </span>
                     </div>
@@ -120,7 +117,7 @@ export default function RoutineNoticeSection({ onStartExam }: RoutineNoticeSecti
           {/* Right: Notice Board */}
           <div className="lg:col-span-4 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
             <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-              <Bell className="w-5 h-5 text-red-500" />
+              <FaBell className="w-4 h-4 text-red-500" />
               <span>জরুরি নোটিশ বোর্ড</span>
             </h3>
 
@@ -158,9 +155,9 @@ export default function RoutineNoticeSection({ onStartExam }: RoutineNoticeSecti
                 </span>
                 <button
                   onClick={() => setSelectedNotice(null)}
-                  className="text-slate-400 hover:text-slate-700"
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
                 >
-                  ✕
+                  <IoClose className="w-5 h-5" />
                 </button>
               </div>
 

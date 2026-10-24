@@ -1,14 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  X,
-  User,
-  Lock,
-  Phone,
-  GraduationCap,
-  Sparkles
-} from 'lucide-react';
+import { IoClose } from 'react-icons/io5';
+import { FaUser, FaLock, FaPhoneAlt, FaGraduationCap } from 'react-icons/fa';
+import { HiSparkles } from 'react-icons/hi2';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -59,13 +54,13 @@ export default function AuthModal({
           onClick={onClose}
           className="absolute top-5 right-5 p-1 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100"
         >
-          <X size={20} />
+          <IoClose className="w-5 h-5" />
         </button>
 
         {/* Modal Header */}
         <div className="text-center mb-6">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#007bff] to-[#0056b3] text-white flex items-center justify-center mx-auto mb-3 shadow-md shadow-blue-500/20">
-            <GraduationCap className="w-7 h-7" />
+            <FaGraduationCap className="w-6 h-6" />
           </div>
           <h3 className="text-2xl font-extrabold text-slate-800">
             {mode === 'login' ? 'শিক্ষার্থী লগইন' : 'নতুন অ্যাকাউন্ট তৈরি করুন'}
@@ -87,7 +82,7 @@ export default function AuthModal({
             type="button"
             className="w-full py-2 px-3 bg-[#007bff] hover:bg-[#0056b3] text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5"
           >
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <HiSparkles className="w-4 h-4 text-amber-300" />
             <span>১-ক্লিকে ডেমো লগইন করুন</span>
           </button>
         </div>
@@ -104,7 +99,7 @@ export default function AuthModal({
             <div>
               <label className="block text-slate-700 font-bold mb-1">পূর্ণ নাম *</label>
               <div className="relative">
-                <User className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                <FaUser className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-3" />
                 <input
                   type="text"
                   required
@@ -120,7 +115,7 @@ export default function AuthModal({
           <div>
             <label className="block text-slate-700 font-bold mb-1">মোবাইল নম্বর *</label>
             <div className="relative">
-              <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              <FaPhoneAlt className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-3" />
               <input
                 type="tel"
                 required
@@ -135,7 +130,7 @@ export default function AuthModal({
           <div>
             <label className="block text-slate-700 font-bold mb-1">পাসওয়ার্ড *</label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              <FaLock className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-3" />
               <input
                 type="password"
                 required

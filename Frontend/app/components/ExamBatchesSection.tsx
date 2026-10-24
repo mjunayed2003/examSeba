@@ -2,15 +2,14 @@
 
 import React, { useState } from 'react';
 import {
-  GraduationCap,
-  ShieldCheck,
-  Award,
-  BookOpen,
-  Layers,
-  Landmark,
-  ArrowRight,
-  Flame
-} from 'lucide-react';
+  FaGraduationCap,
+  FaShieldAlt,
+  FaAward,
+  FaBookOpen,
+  FaUniversity,
+  FaArrowRight
+} from 'react-icons/fa';
+import { FaLayerGroup, FaFire } from 'react-icons/fa6';
 import { SAMPLE_EXAMS, Exam } from '../data/examData';
 
 interface ExamBatchesSectionProps {
@@ -23,7 +22,7 @@ export default function ExamBatchesSection({ onStartExam }: ExamBatchesSectionPr
   const batches = [
     {
       id: 'primary',
-      icon: GraduationCap,
+      icon: FaGraduationCap,
       title: 'প্রাইমারি পরীক্ষা',
       description:
         'প্রাথমিক শিক্ষা সমাপনী ও শিক্ষক নিয়োগ পরীক্ষার জন্য সম্পূর্ণ প্রস্তুতি। সকল বিষয়ের উপর বিস্তারিত অনুশীলন।',
@@ -36,7 +35,7 @@ export default function ExamBatchesSection({ onStartExam }: ExamBatchesSectionPr
     },
     {
       id: 'ntrca',
-      icon: ShieldCheck,
+      icon: FaShieldAlt,
       title: 'নিবন্ধন পরীক্ষা',
       description:
         'শিক্ষক নিবন্ধন পরীক্ষার সম্পূর্ণ প্রস্তুতি। স্কুল ও কলেজ পর্যায়ের সকল সাধারণ ও ঐচ্ছিক বিষয়।',
@@ -49,7 +48,7 @@ export default function ExamBatchesSection({ onStartExam }: ExamBatchesSectionPr
     },
     {
       id: 'bcs',
-      icon: Award,
+      icon: FaAward,
       title: 'বিসিএস পরীক্ষা',
       description:
         'বাংলাদেশ সিভিল সার্ভিস পরীক্ষার প্রিলিমিনারি ও রিটেন পরীক্ষার সম্পূর্ণ সিলেবাস ভিত্তিক প্রস্তুতি।',
@@ -62,7 +61,7 @@ export default function ExamBatchesSection({ onStartExam }: ExamBatchesSectionPr
     },
     {
       id: 'general',
-      icon: BookOpen,
+      icon: FaBookOpen,
       title: 'সাধারণ জ্ঞান',
       description:
         'বাংলাদেশ ও আন্তর্জাতিক বিষয়াবলী, সাম্প্রতিক বিশ্ব, ইতিহাস, ভূগোল, বিজ্ঞান ও প্রযুক্তি সহ সকল বিষয়।',
@@ -75,7 +74,7 @@ export default function ExamBatchesSection({ onStartExam }: ExamBatchesSectionPr
     },
     {
       id: 'subject',
-      icon: Layers,
+      icon: FaLayerGroup,
       title: 'সাবজেক্ট ওয়াইজ',
       description:
         'বাংলা, ইংরেজি, গণিত, বিজ্ঞান সহ প্রতিটি বিষয়ের আলাদা আলাদা অধ্যায়ভিত্তিক গভীর প্রস্তুতি।',
@@ -88,7 +87,7 @@ export default function ExamBatchesSection({ onStartExam }: ExamBatchesSectionPr
     },
     {
       id: 'bank',
-      icon: Landmark,
+      icon: FaUniversity,
       title: 'ব্যাংক জব',
       description:
         'সরকারি ও বেসরকারি ব্যাংকের সিনিয়র অফিসার, অফিসার ও ক্যাশিয়ার পদের জন্য বিশেষ ম্যাথ ও ইংলিশ প্রস্তুতি।',
@@ -150,7 +149,7 @@ export default function ExamBatchesSection({ onStartExam }: ExamBatchesSectionPr
                 {/* Badge */}
                 <div className="self-end mb-1">
                   <span className="bg-blue-50 text-[#007bff] border border-blue-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                    <Flame className="w-3 h-3 text-red-500 fill-red-500" />
+                    <FaFire className="w-3 h-3 text-red-500" />
                     {batch.badge}
                   </span>
                 </div>
@@ -197,10 +196,10 @@ export default function ExamBatchesSection({ onStartExam }: ExamBatchesSectionPr
                 {/* Start Button */}
                 <button
                   onClick={() => handleBatchClick(batch.examId)}
-                  className="bijoy-batch-btn group-hover:shadow-lg"
+                  className="bijoy-batch-btn group-hover:shadow-lg flex items-center justify-center gap-2"
                 >
-                  <ArrowRight className="w-4 h-4" />
                   <span>এখনই শুরু করুন</span>
+                  <FaArrowRight className="w-3.5 h-3.5" />
                 </button>
 
               </div>

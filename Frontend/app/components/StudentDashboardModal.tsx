@@ -1,13 +1,8 @@
 'use client';
 
 import React from 'react';
-import {
-  X,
-  Trophy,
-  Flame,
-  FileCheck,
-  LogOut
-} from 'lucide-react';
+import { FaTrophy, FaFire, FaClipboardCheck, FaArrowRightFromBracket } from 'react-icons/fa6';
+import { IoClose } from 'react-icons/io5';
 
 interface StudentDashboardModalProps {
   isOpen: boolean;
@@ -75,7 +70,7 @@ export default function StudentDashboardModal({
             onClick={onClose}
             className="p-1 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100"
           >
-            <X size={22} />
+            <IoClose className="w-5 h-5" />
           </button>
         </div>
 
@@ -102,7 +97,7 @@ export default function StudentDashboardModal({
         {/* Certificate / Badge */}
         <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-300 flex items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
-            <Trophy className="w-8 h-8 text-amber-500 shrink-0" />
+            <FaTrophy className="w-8 h-8 text-amber-500 shrink-0" />
             <div>
               <h4 className="font-bold text-sm text-slate-800">
                 টপ স্কিল পারফর্মার ব্যাজ অর্জন
@@ -120,7 +115,7 @@ export default function StudentDashboardModal({
         {/* Recent Exam History */}
         <div className="mb-6">
           <h4 className="font-bold text-sm text-slate-800 mb-3 flex items-center gap-2">
-            <FileCheck className="w-4 h-4 text-[#007bff]" />
+            <FaClipboardCheck className="w-4 h-4 text-[#007bff]" />
             <span>সাম্প্রতিক পরীক্ষার ইতিহাস ও ফলাফল</span>
           </h4>
 
@@ -154,7 +149,7 @@ export default function StudentDashboardModal({
             }}
             className="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1.5"
           >
-            <LogOut className="w-4 h-4" />
+            <FaArrowRightFromBracket className="w-4 h-4" />
             <span>লগআউট করুন</span>
           </button>
 
@@ -165,7 +160,7 @@ export default function StudentDashboardModal({
             }}
             className="px-5 py-2.5 bg-[#007bff] hover:bg-[#0056b3] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition-all flex items-center gap-1.5"
           >
-            <Flame className="w-4 h-4" />
+            <FaFire className="w-4 h-4" />
             <span>নতুন লাইভ পরীক্ষা দিন</span>
           </button>
         </div>

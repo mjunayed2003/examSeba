@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Rocket, PlayCircle } from 'lucide-react';
+import { FaRocket, FaPlayCircle } from 'react-icons/fa';
 
 interface CtaSectionProps {
   onStartExam: () => void;
@@ -28,7 +28,7 @@ export default function CtaSection({ onStartExam, onOpenAuth }: CtaSectionProps)
             className="hero-btn-primary"
             id="cta-register-btn"
           >
-            <Rocket className="w-5 h-5 text-[#007bff]" />
+            <FaRocket className="w-5 h-5 text-[#007bff]" />
             <span>ফ্রি রেজিস্ট্রেশন</span>
           </button>
 
@@ -37,7 +37,7 @@ export default function CtaSection({ onStartExam, onOpenAuth }: CtaSectionProps)
             className="hero-btn-outline"
             id="cta-demo-btn"
           >
-            <PlayCircle className="w-5 h-5 text-white" />
+            <FaPlayCircle className="w-5 h-5 text-white" />
             <span>ডেমো দেখুন</span>
           </button>
 

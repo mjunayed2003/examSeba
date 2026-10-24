@@ -2,12 +2,8 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import {
-  GraduationCap,
-  CheckCircle2,
-  ArrowRight,
-  X
-} from 'lucide-react';
+import { FaGraduationCap, FaCheckCircle, FaArrowRight } from 'react-icons/fa';
+import { IoClose } from 'react-icons/io5';
 import { SAMPLE_COURSES, Course } from '../data/examData';
 
 interface CourseCatalogSectionProps {
@@ -94,7 +90,7 @@ export default function CourseCatalogSection({ onEnrollCourse }: CourseCatalogSe
                   </h3>
 
                   <p className="text-xs text-slate-500 font-medium mb-4 flex items-center gap-1.5">
-                    <GraduationCap className="w-4 h-4 text-[#007bff]" />
+                    <FaGraduationCap className="w-4 h-4 text-[#007bff]" />
                     <span>মেন্টর: {course.mentor} ({course.mentorDesignation})</span>
                   </p>
 
@@ -118,7 +114,7 @@ export default function CourseCatalogSection({ onEnrollCourse }: CourseCatalogSe
                   <ul className="space-y-1.5 text-xs text-slate-600 mb-5">
                     {course.features.slice(0, 3).map((feat, fIdx) => (
                       <li key={fIdx} className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                        <FaCheckCircle className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                         <span className="truncate">{feat}</span>
                       </li>
                     ))}
@@ -153,7 +149,7 @@ export default function CourseCatalogSection({ onEnrollCourse }: CourseCatalogSe
                       className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#007bff] to-[#0056b3] hover:from-[#0056b3] hover:to-[#004085] text-white text-xs sm:text-sm font-bold shadow-md transition-all flex items-center gap-1.5"
                     >
                       <span>ভর্তি হন</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <FaArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
@@ -177,7 +173,7 @@ export default function CourseCatalogSection({ onEnrollCourse }: CourseCatalogSe
                   onClick={() => setActiveCourseDetails(null)}
                   className="p-1 rounded-full text-slate-400 hover:text-slate-700"
                 >
-                  <X size={20} />
+                  <IoClose size={20} />
                 </button>
               </div>
 
@@ -194,7 +190,7 @@ export default function CourseCatalogSection({ onEnrollCourse }: CourseCatalogSe
               <div className="space-y-2 mb-6">
                 {activeCourseDetails.features.map((feat, idx) => (
                   <div key={idx} className="flex items-center gap-2 text-xs text-slate-700">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <FaCheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
                     <span>{feat}</span>
                   </div>
                 ))}

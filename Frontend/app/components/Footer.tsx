@@ -2,12 +2,12 @@
 
 import React from 'react';
 import {
-  GraduationCap,
-  Phone,
-  Mail,
-  MapPin,
-  Send
-} from 'lucide-react';
+  FaGraduationCap,
+  FaPhone,
+  FaEnvelope,
+  FaLocationDot,
+  FaTelegram
+} from 'react-icons/fa6';
 
 interface FooterProps {
   onNavClick: (sectionId: string) => void;
@@ -23,7 +23,7 @@ export default function Footer({ onNavClick }: FooterProps) {
           <div>
             <div className="flex items-center gap-2.5 mb-4">
               <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md">
-                <GraduationCap className="w-5 h-5" />
+                <FaGraduationCap className="w-5 h-5" />
               </div>
               <span className="font-extrabold text-xl text-white tracking-wide">
                 JobQuizTest
@@ -65,7 +65,7 @@ export default function Footer({ onNavClick }: FooterProps) {
                 className="w-8 h-8 rounded-full bg-slate-800 hover:bg-sky-500 text-slate-300 hover:text-white flex items-center justify-center transition-colors"
                 aria-label="Telegram"
               >
-                <Send className="w-4 h-4" />
+                <FaTelegram className="w-4 h-4" />
               </a>
             </div>
           </div>
@@ -175,18 +175,18 @@ export default function Footer({ onNavClick }: FooterProps) {
             </h4>
             <ul className="space-y-3 text-xs text-slate-400">
               <li className="flex items-start gap-2.5">
-                <Phone className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+                <FaPhone className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-1" />
                 <div>
                   <span className="block text-white font-bold">০৯৬১-২০০৩০০, ০১৭XXXXXXXX</span>
                   <span>(সকাল ৯টা হতে রাত ১০টা)</span>
                 </div>
               </li>
               <li className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-blue-400 shrink-0" />
+                <FaEnvelope className="w-3.5 h-3.5 text-blue-400 shrink-0" />
                 <span>support@examsheba.com</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+                <FaLocationDot className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-1" />
                 <span>মিরপুর-১০, ঢাকা-১২১৬, বাংলাদেশ</span>
               </li>
             </ul>

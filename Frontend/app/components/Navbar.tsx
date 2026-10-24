@@ -2,19 +2,19 @@
 
 import React, { useState } from 'react';
 import {
-  Menu,
-  X,
-  User,
-  GraduationCap,
-  BookOpen,
-  Award,
-  Bell,
-  LogOut,
-  Calendar,
-  Layers,
-  ShoppingBag,
-  Flame
-} from 'lucide-react';
+  FaGraduationCap,
+  FaBookOpen,
+  FaAward,
+  FaBell,
+  FaCalendarAlt,
+  FaShoppingBag,
+  FaFire,
+  FaSignOutAlt,
+  FaUserCircle
+} from 'react-icons/fa';
+import { FaLayerGroup } from 'react-icons/fa6';
+import { HiBars3 } from 'react-icons/hi2';
+import { IoClose } from 'react-icons/io5';
 
 interface NavbarProps {
   onOpenExamModal: (examId?: string) => void;
@@ -39,14 +39,14 @@ export default function Navbar({
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   const navLinks = [
-    { id: 'home', label: 'Home', icon: Layers },
-    { id: 'exams', label: 'Exams', icon: Award },
-    { id: 'courses', label: 'কোর্সসমূহ', icon: GraduationCap },
-    { id: 'studyroom', label: 'ফ্রি স্টাডি রুম', icon: BookOpen },
-    { id: 'job_alert', label: 'Job Alert', icon: Bell },
-    { id: 'leaderboard', label: 'লিডারবোর্ড', icon: Flame },
-    { id: 'routine', label: 'রুটিন ও নোটিশ', icon: Calendar },
-    { id: 'books', label: 'বই সম্ভার', icon: ShoppingBag },
+    { id: 'home', label: 'Home', icon: FaLayerGroup },
+    { id: 'exams', label: 'Exams', icon: FaAward },
+    { id: 'courses', label: 'কোর্সসমূহ', icon: FaGraduationCap },
+    { id: 'studyroom', label: 'ফ্রি স্টাডি রুম', icon: FaBookOpen },
+    { id: 'job_alert', label: 'Job Alert', icon: FaBell },
+    { id: 'leaderboard', label: 'লিডারবোর্ড', icon: FaFire },
+    { id: 'routine', label: 'রুটিন ও নোটিশ', icon: FaCalendarAlt },
+    { id: 'books', label: 'বই সম্ভার', icon: FaShoppingBag },
   ];
 
   const handleNavClick = (id: string) => {
@@ -90,7 +90,7 @@ export default function Navbar({
               className="lg:hidden p-2 text-white hover:text-blue-100 transition-transform duration-200"
               aria-label="Toggle Navigation Menu"
             >
-              {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
+              {mobileMenuOpen ? <IoClose size={26} /> : <HiBars3 size={26} />}
             </button>
 
             {/* Brand Logo */}
@@ -103,7 +103,7 @@ export default function Navbar({
               className="flex items-center gap-2.5 text-white font-bold text-xl md:text-2xl tracking-wide group"
             >
               <div className="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/30 text-white shadow-inner group-hover:scale-105 transition-all">
-                <GraduationCap className="w-6 h-6 text-white" />
+                <FaGraduationCap className="w-6 h-6 text-white" />
               </div>
               <div className="flex flex-col leading-tight">
                 <span className="font-extrabold text-white group-hover:text-blue-100 transition-colors">
@@ -141,7 +141,7 @@ export default function Navbar({
                 onClick={() => onOpenExamModal()}
                 className="hidden sm:inline-flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold px-3.5 py-1.5 rounded-full text-xs md:text-sm shadow-md transition-transform hover:scale-105"
               >
-                <Flame className="w-4 h-4 text-red-600 fill-red-600 animate-bounce" />
+                <FaFire className="w-4 h-4 text-red-600 animate-bounce" />
                 <span>লাইভ এক্সাম</span>
               </button>
 
@@ -178,7 +178,7 @@ export default function Navbar({
                         onClick={onOpenDashboard}
                         className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-blue-50 hover:text-[#007bff] flex items-center gap-2.5 transition-colors"
                       >
-                        <User className="w-4 h-4 text-[#007bff]" />
+                        <FaUserCircle className="w-4 h-4 text-[#007bff]" />
                         <span>শিক্ষার্থী ড্যাশবোর্ড</span>
                       </button>
 
@@ -186,7 +186,7 @@ export default function Navbar({
                         onClick={() => onOpenExamModal()}
                         className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-blue-50 hover:text-[#007bff] flex items-center gap-2.5 transition-colors"
                       >
-                        <Award className="w-4 h-4 text-[#007bff]" />
+                        <FaAward className="w-4 h-4 text-[#007bff]" />
                         <span>আমার পরীক্ষা ও ফলাফল</span>
                       </button>
 
@@ -196,7 +196,7 @@ export default function Navbar({
                         onClick={onLogout}
                         className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2.5 transition-colors font-medium"
                       >
-                        <LogOut className="w-4 h-4" />
+                        <FaSignOutAlt className="w-4 h-4" />
                         <span>লগআউট করুন</span>
                       </button>
                     </div>
@@ -239,14 +239,14 @@ export default function Navbar({
       >
         <div className="p-4 border-b border-white/15 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <GraduationCap className="w-6 h-6 text-white" />
+            <FaGraduationCap className="w-6 h-6 text-white" />
             <span className="font-extrabold text-lg text-white">JobQuizTest</span>
           </div>
           <button
             onClick={() => setMobileMenuOpen(false)}
             className="p-1 rounded-full text-white/80 hover:text-white"
           >
-            <X size={22} />
+            <IoClose size={22} />
           </button>
         </div>
 
@@ -317,7 +317,7 @@ export default function Navbar({
             }}
             className="w-full bg-amber-400 text-slate-900 font-bold py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 shadow-lg"
           >
-            <Flame className="w-4 h-4 text-red-600 fill-red-600" />
+            <FaFire className="w-4 h-4 text-red-600" />
             <span>লাইভ পরীক্ষা শুরু করুন</span>
           </button>
         </div>

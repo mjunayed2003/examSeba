@@ -2,13 +2,13 @@
 
 import React, { useState } from 'react';
 import {
-  Download,
-  Flame,
-  FileText,
-  Clock,
-  Sparkles,
-  Check
-} from 'lucide-react';
+  FaFire,
+  FaFileAlt,
+  FaClock,
+  FaCheck,
+  FaDownload
+} from 'react-icons/fa';
+import { HiSparkles } from 'react-icons/hi2';
 import { FREE_STUDY_MATERIALS, SAMPLE_EXAMS, Exam } from '../data/examData';
 
 interface DailyFreeExamSectionProps {
@@ -55,7 +55,7 @@ export default function DailyFreeExamSection({ onStartExam }: DailyFreeExamSecti
           <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6">
             <div className="max-w-2xl text-center lg:text-left">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-400 text-slate-900 rounded-full text-xs font-black uppercase mb-3 shadow-sm">
-                <Flame className="w-3.5 h-3.5 fill-red-600 text-red-600" />
+                <FaFire className="w-3.5 h-3.5 text-red-600" />
                 <span>আজকের লাইভ ফ্রি এক্সাম</span>
               </div>
               <h3 className="text-2xl sm:text-3xl font-extrabold mb-2 leading-tight">
@@ -67,7 +67,7 @@ export default function DailyFreeExamSection({ onStartExam }: DailyFreeExamSecti
               </p>
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs font-semibold text-emerald-50">
                 <span className="flex items-center gap-1">
-                  <Clock className="w-4 h-4 text-amber-300" />
+                  <FaClock className="w-4 h-4 text-amber-300" />
                   <span>১০ মিনিট</span>
                 </span>
                 <span>•</span>
@@ -83,7 +83,7 @@ export default function DailyFreeExamSection({ onStartExam }: DailyFreeExamSecti
               onClick={() => onStartExam(dailyFreeExam)}
               className="px-8 py-3.5 rounded-full bg-white text-emerald-800 hover:bg-emerald-50 font-extrabold text-sm sm:text-base shadow-2xl transition-all hover:scale-105 flex items-center gap-2 shrink-0"
             >
-              <Sparkles className="w-5 h-5 text-amber-500" />
+              <HiSparkles className="w-5 h-5 text-amber-500" />
               <span>ফ্রি পরীক্ষা শুরু করুন</span>
             </button>
           </div>
@@ -91,7 +91,7 @@ export default function DailyFreeExamSection({ onStartExam }: DailyFreeExamSecti
 
         {/* Free PDF Notes Grid */}
         <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-          <FileText className="w-5 h-5 text-[#007bff]" />
+          <FaFileAlt className="w-5 h-5 text-[#007bff]" />
           <span>ডাউনলোডযোগ্য ফ্রি লেকচার শিট ও হ্যান্ডনোট (PDF)</span>
         </h3>
 
@@ -105,7 +105,7 @@ export default function DailyFreeExamSection({ onStartExam }: DailyFreeExamSecti
               >
                 <div>
                   <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#007bff] flex items-center justify-center font-bold mb-3">
-                    <FileText className="w-5 h-5" />
+                    <FaFileAlt className="w-5 h-5" />
                   </div>
                   <span className="text-[11px] font-bold text-[#007bff] bg-blue-50/70 px-2 py-0.5 rounded-md inline-block mb-2">
                     {mat.subject}
@@ -128,12 +128,12 @@ export default function DailyFreeExamSection({ onStartExam }: DailyFreeExamSecti
                 >
                   {isDownloaded ? (
                     <>
-                      <Check className="w-4 h-4 text-emerald-600" />
+                      <FaCheck className="w-4 h-4 text-emerald-600" />
                       <span>ডাউনলোড হয়েছে</span>
                     </>
                   ) : (
                     <>
-                      <Download className="w-4 h-4" />
+                      <FaDownload className="w-4 h-4" />
                       <span>ফ্রি ডাউনলোড করুন</span>
                     </>
                   )}

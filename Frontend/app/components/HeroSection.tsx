@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { PlayCircle, Award, Sparkles } from 'lucide-react';
+import { FaPlayCircle, FaAward, FaUserPlus } from 'react-icons/fa';
+import { HiSparkles } from 'react-icons/hi2';
 
 interface HeroSectionProps {
   onStartExam: () => void;
@@ -20,7 +21,7 @@ export default function HeroSection({
         
         {/* Top Floating Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-white text-xs md:text-sm font-semibold mb-6 shadow-sm">
-          <Sparkles className="w-4 h-4 text-amber-300 animate-spin" style={{ animationDuration: '4s' }} />
+          <HiSparkles className="w-4 h-4 text-amber-300 animate-spin" style={{ animationDuration: '4s' }} />
           <span>বাংলাদেশের নির্ভরযোগ্য অনলাইন চাকরি প্রস্তুতি ও পরীক্ষা পোর্টাল</span>
         </div>
 
@@ -42,7 +43,7 @@ export default function HeroSection({
             className="hero-btn-primary"
             id="hero-start-exam-btn"
           >
-            <PlayCircle className="w-5 h-5 text-[#007bff]" />
+            <FaPlayCircle className="w-5 h-5 text-[#007bff]" />
             <span>পরীক্ষা শুরু করুন</span>
           </button>
 
@@ -51,16 +52,17 @@ export default function HeroSection({
             className="hero-btn-outline"
             id="hero-demo-exam-btn"
           >
-            <Award className="w-5 h-5 text-white" />
+            <FaAward className="w-5 h-5 text-white" />
             <span>ফ্রি ডেমো মডেল টেস্ট</span>
           </button>
 
           {onOpenAuth && (
             <button
               onClick={onOpenAuth}
-              className="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold text-sm transition-all hover:scale-105"
+              className="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold text-sm transition-all hover:scale-105 flex items-center gap-2"
               id="hero-auth-btn"
             >
+              <FaUserPlus className="w-4 h-4 text-amber-300" />
               <span>নতুন একাউন্ট খুলুন</span>
             </button>
           )}

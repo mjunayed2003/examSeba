@@ -2,9 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import {
-  Trophy
-} from 'lucide-react';
+import { FaTrophy } from 'react-icons/fa6';
 import { SAMPLE_LEADERBOARD } from '../data/examData';
 
 interface LeaderboardSectionProps {
@@ -90,7 +88,7 @@ export default function LeaderboardSection({}: LeaderboardSectionProps) {
           {filteredEntries[0] && (
             <div className="bg-gradient-to-b from-amber-50 to-amber-100/50 border-2 border-amber-300 rounded-2xl p-6 text-center flex flex-col items-center justify-center order-1 md:order-2 relative shadow-lg transform md:-translate-y-3">
               <div className="absolute -top-3 px-3 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black text-xs uppercase flex items-center gap-1 shadow">
-                <Trophy className="w-3.5 h-3.5" />
+                <FaTrophy className="w-3.5 h-3.5" />
                 <span>১ম স্থান (টপার)</span>
               </div>
               <Image

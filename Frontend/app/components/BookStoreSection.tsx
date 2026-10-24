@@ -3,11 +3,12 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import {
-  ShoppingBag,
-  CheckCircle,
-  Truck,
-  Check
-} from 'lucide-react';
+  FaShoppingBag,
+  FaCheckCircle,
+  FaTruck,
+  FaCheck
+} from 'react-icons/fa';
+import { IoClose } from 'react-icons/io5';
 import { SAMPLE_BOOKS, Book } from '../data/examData';
 
 export default function BookStoreSection() {
@@ -102,12 +103,12 @@ export default function BookStoreSection() {
                   >
                     {isOrdered ? (
                       <>
-                        <Check className="w-4 h-4" />
+                        <FaCheck className="w-4 h-4" />
                         <span>অর্ডার সম্পন্ন হয়েছে</span>
                       </>
                     ) : (
                       <>
-                        <ShoppingBag className="w-4 h-4" />
+                        <FaShoppingBag className="w-4 h-4" />
                         <span>এখনই অর্ডার করুন</span>
                       </>
                     )}
@@ -131,9 +132,9 @@ export default function BookStoreSection() {
                     </span>
                     <button
                       onClick={() => setSelectedBookForOrder(null)}
-                      className="text-slate-400 hover:text-slate-700"
+                      className="p-1 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100"
                     >
-                      ✕
+                      <IoClose size={18} />
                     </button>
                   </div>
 
@@ -191,7 +192,7 @@ export default function BookStoreSection() {
                     </div>
 
                     <div className="p-2.5 bg-blue-50/70 rounded-xl border border-blue-100 text-[11px] text-blue-900 flex items-center gap-2">
-                      <Truck className="w-4 h-4 text-blue-600 shrink-0" />
+                      <FaTruck className="w-4 h-4 text-blue-600 shrink-0" />
                       <span>ক্যাশ অন ডেলিভারি সুবিধা (বই হাতে পেয়ে মূল্য পরিশোধ করুন)</span>
                     </div>
 
@@ -215,7 +216,7 @@ export default function BookStoreSection() {
               ) : (
                 <div className="text-center py-6">
                   <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-3">
-                    <CheckCircle className="w-8 h-8" />
+                    <FaCheckCircle className="w-8 h-8" />
                   </div>
                   <h4 className="text-lg font-bold text-slate-800 mb-1">
                     অর্ডার সফলভাবে গ্রহণ করা হয়েছে!

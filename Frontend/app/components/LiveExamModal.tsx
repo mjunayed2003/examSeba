@@ -2,18 +2,18 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  X,
-  Clock,
-  AlertCircle,
-  HelpCircle,
-  ArrowRight,
-  ArrowLeft,
-  RotateCcw,
-  Award,
-  Trophy,
-  BookOpen,
-  Flag
-} from 'lucide-react';
+  FaRegClock,
+  FaCircleExclamation,
+  FaCircleQuestion,
+  FaArrowRight,
+  FaArrowLeft,
+  FaRotateRight,
+  FaAward,
+  FaTrophy,
+  FaBookOpen,
+  FaFlag
+} from 'react-icons/fa6';
+import { IoClose } from 'react-icons/io5';
 import { Exam } from '../data/examData';
 
 interface LiveExamModalProps {
@@ -176,7 +176,7 @@ export default function LiveExamModal({
         <div className="bg-gradient-to-r from-[#007bff] to-[#0056b3] text-white px-4 sm:px-6 py-3.5 flex items-center justify-between shadow-md">
           <div className="flex items-center gap-3 truncate">
             <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center font-bold">
-              <Award className="w-5 h-5 text-amber-300" />
+              <FaAward className="w-4 h-4 text-amber-300" />
             </div>
             <div className="truncate">
               <h3 className="font-bold text-sm sm:text-base truncate leading-tight">
@@ -199,7 +199,7 @@ export default function LiveExamModal({
                     : 'bg-white/15 border-white/30 text-white'
                 }`}
               >
-                <Clock className="w-4 h-4" />
+                <FaRegClock className="w-3.5 h-3.5" />
                 <span>{formatTime(timeLeft)}</span>
               </div>
             )}
@@ -208,7 +208,7 @@ export default function LiveExamModal({
               onClick={onClose}
               className="p-1 rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-colors"
             >
-              <X size={22} />
+              <IoClose className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -237,7 +237,7 @@ export default function LiveExamModal({
                             : 'bg-slate-100 text-slate-600 border-slate-200'
                         }`}
                       >
-                        <Flag className="w-3.5 h-3.5" />
+                        <FaFlag className="w-3 h-3" />
                         <span>{flaggedQuestions[currentQ.id] ? 'রিভিউ মার্কড' : 'রিভিউ করুন'}</span>
                       </button>
                       <span className="text-xs text-slate-500 font-bold">
@@ -297,7 +297,7 @@ export default function LiveExamModal({
                       disabled={currentQuestionIndex === 0}
                       className="px-3.5 py-1.5 rounded-lg border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-100 disabled:opacity-40 flex items-center gap-1"
                     >
-                      <ArrowLeft className="w-3.5 h-3.5" />
+                      <FaArrowLeft className="w-3 h-3" />
                       <span>পূর্ববর্তী</span>
                     </button>
 
@@ -307,7 +307,7 @@ export default function LiveExamModal({
                         className="px-4 py-1.5 rounded-lg bg-[#007bff] hover:bg-[#0056b3] text-white text-xs font-semibold flex items-center gap-1 shadow-sm"
                       >
                         <span>পরবর্তী</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        <FaArrowRight className="w-3 h-3" />
                       </button>
                     ) : (
                       <button
@@ -398,7 +398,7 @@ export default function LiveExamModal({
                 <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-md border border-slate-200 text-center relative overflow-hidden">
                   
                   <div className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center bg-blue-50 text-[#007bff] shadow-inner">
-                    <Trophy className="w-9 h-9 text-amber-500" />
+                    <FaTrophy className="w-8 h-8 text-amber-500" />
                   </div>
 
                   <h3 className="text-2xl font-extrabold text-slate-800 mb-1">
@@ -438,7 +438,7 @@ export default function LiveExamModal({
                       onClick={handleRetake}
                       className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm flex items-center gap-1.5 transition-colors"
                     >
-                      <RotateCcw className="w-4 h-4" />
+                      <FaRotateRight className="w-3.5 h-3.5" />
                       <span>পুনরায় পরীক্ষা দিন</span>
                     </button>
                     <button
@@ -448,7 +448,7 @@ export default function LiveExamModal({
                       }}
                       className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-md transition-transform hover:scale-105"
                     >
-                      <Trophy className="w-4 h-4 text-slate-900" />
+                      <FaTrophy className="w-3.5 h-3.5 text-slate-900" />
                       <span>মেধা তালিকা (Leaderboard) দেখুন</span>
                     </button>
                   </div>
@@ -458,7 +458,7 @@ export default function LiveExamModal({
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6">
                   <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
                     <h4 className="font-extrabold text-lg text-slate-800 flex items-center gap-2">
-                      <BookOpen className="w-5 h-5 text-[#007bff]" />
+                      <FaBookOpen className="w-4 h-4 text-[#007bff]" />
                       <span>বিস্তারিত প্রশ্ন সমাধান ও ব্যাখ্যা</span>
                     </h4>
                     <span className="text-xs text-slate-500 font-medium">
@@ -536,7 +536,7 @@ export default function LiveExamModal({
                           {/* Detailed Explanation */}
                           <div className="bg-white/80 p-3.5 rounded-xl border border-slate-200 text-xs sm:text-sm">
                             <div className="font-bold text-slate-700 mb-1 flex items-center gap-1.5 text-blue-600">
-                              <HelpCircle className="w-4 h-4" />
+                              <FaCircleQuestion className="w-3.5 h-3.5" />
                               <span>ব্যাখ্যা ও রেফারেন্স:</span>
                             </div>
                             <p className="text-slate-600 leading-relaxed">{q.explanation}</p>
@@ -557,7 +557,7 @@ export default function LiveExamModal({
           <div className="fixed inset-0 z-60 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl text-center border border-slate-100 animate-in zoom-in-95 duration-150">
               <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-3">
-                <AlertCircle className="w-6 h-6" />
+                <FaCircleExclamation className="w-5 h-5" />
               </div>
               <h4 className="text-lg font-bold text-slate-800 mb-2">
                 আপনি কি পরীক্ষা সমাপ্ত করতে চান?
