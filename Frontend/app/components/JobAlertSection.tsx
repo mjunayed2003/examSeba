@@ -9,9 +9,12 @@ import {
 } from 'react-icons/fa';
 import { IoClose } from 'react-icons/io5';
 import { SAMPLE_JOBS, JobCircular } from '../data/examData';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function JobAlertSection() {
   const [selectedJob, setSelectedJob] = useState<JobCircular | null>(null);
+  const { lang, t } = useLanguage();
+  const isBn = lang === 'bn';
 
   return (
     <section id="job_alert" className="py-20 bg-[#f8f9fa] border-t border-slate-200">
@@ -19,11 +22,11 @@ export default function JobAlertSection() {
         
         <div className="text-center mb-12">
           <span className="text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-3 py-1 rounded-full uppercase tracking-wider">
-            সদ্য প্রকাশিত চাকরির বিজ্ঞপ্তি
+            {t.jobAlert.badge}
           </span>
-          <h2 className="bijoy-section-title mt-2">চাকরির খবর ও নিয়োগ সার্কুলার</h2>
+          <h2 className="bijoy-section-title mt-2">{t.jobAlert.title}</h2>
           <p className="text-sm text-slate-600 max-w-xl mx-auto -mt-6">
-            বিসিএস, প্রাথমিক শিক্ষক নিয়োগ, ব্যাংক ও মন্ত্রণালয়ের চলমান সকল সরকারি চাকরির তথ্য এক নজরে।
+            {t.jobAlert.subtitle}
           </p>
         </div>
 
@@ -41,7 +44,7 @@ export default function JobAlertSection() {
                   </span>
                   <span className="text-xs font-bold text-red-500 flex items-center gap-1 bg-red-50 px-2.5 py-0.5 rounded-full border border-red-100">
                     <FaCalendarAlt className="w-3.5 h-3.5" />
-                    <span>শেষ তারিখ: {job.deadline}</span>
+                    <span>{isBn ? 'শেষ তারিখ:' : 'Deadline:'} {job.deadline}</span>
                   </span>
                 </div>
 
@@ -56,17 +59,17 @@ export default function JobAlertSection() {
 
                 <div className="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-xl mb-4 border border-slate-100 text-xs">
                   <div>
-                    <span className="text-slate-400 block text-[11px]">মোট পদসংখ্যা</span>
+                    <span className="text-slate-400 block text-[11px]">{isBn ? 'মোট পদসংখ্যা' : 'Vacancies'}</span>
                     <span className="font-extrabold text-slate-800 text-sm">{job.vacancies}</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[11px]">বেতন স্কেল</span>
+                    <span className="text-slate-400 block text-[11px]">{isBn ? 'বেতন স্কেল' : 'Salary Scale'}</span>
                     <span className="font-bold text-slate-700 truncate block">{job.salaryScale}</span>
                   </div>
                 </div>
 
                 <div className="text-xs text-slate-600 mb-4 line-clamp-2">
-                  <span className="font-bold text-slate-700">যোগ্যতা: </span>
+                  <span className="font-bold text-slate-700">{isBn ? 'যোগ্যতা: ' : 'Eligibility: '}</span>
                   {job.qualification}
                 </div>
               </div>
@@ -76,17 +79,17 @@ export default function JobAlertSection() {
                   onClick={() => setSelectedJob(job)}
                   className="text-xs font-bold text-[#007bff] hover:underline flex items-center gap-1"
                 >
-                  <span>সম্পূর্ণ নোটিশ দেখুন</span>
+                  <span>{isBn ? 'সম্পূর্ণ নোটিশ দেখুন' : 'View Full Circular'}</span>
                   <FaChevronRight className="w-3 h-3" />
                 </button>
 
                 <a
-                  href={job.applicationLink}
+                  href={job.applicationLink || '#'}
                   target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 bg-[#007bff] hover:bg-[#0056b3] text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center gap-1.5"
+                  rel="noreferrer"
+                  className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-[#007bff] text-slate-700 hover:text-white text-xs font-bold transition-all flex items-center gap-1.5"
                 >
-                  <span>আবেদন লিংক</span>
+                  <span>{isBn ? 'আবেদন করুন' : 'Apply'}</span>
                   <FaExternalLinkAlt className="w-3 h-3" />
                 </a>
               </div>
@@ -94,60 +97,60 @@ export default function JobAlertSection() {
           ))}
         </div>
 
-        {/* Circular Detail Modal */}
+        {/* Modal for Job Details */}
         {selectedJob && (
           <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100">
+            <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
-                <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full">
-                  সার্কুলার বিবরণ
+                <span className="text-xs font-bold text-[#007bff] bg-blue-50 px-2.5 py-0.5 rounded-full">
+                  {selectedJob.category}
                 </span>
                 <button
                   onClick={() => setSelectedJob(null)}
-                  className="p-1 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+                  className="p-1 rounded-full text-slate-400 hover:text-slate-700"
                 >
-                  <IoClose size={18} />
+                  <IoClose size={22} />
                 </button>
               </div>
 
-              <h3 className="text-lg font-bold text-slate-800 mb-2">{selectedJob.title}</h3>
-              <p className="text-xs text-slate-500 mb-4 font-medium">{selectedJob.organization}</p>
+              <h3 className="text-lg font-bold text-slate-800 mb-2 leading-tight">
+                {selectedJob.title}
+              </h3>
+              <p className="text-xs text-slate-500 font-semibold mb-4">
+                {selectedJob.organization}
+              </p>
 
-              <div className="space-y-3 text-xs text-slate-700 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <div>
-                  <span className="font-bold block text-slate-800">পদসংখ্যা:</span>
-                  <span>{selectedJob.vacancies}</span>
-                </div>
-                <div>
-                  <span className="font-bold block text-slate-800">শিক্ষাগত যোগ্যতা:</span>
-                  <span>{selectedJob.qualification}</span>
-                </div>
-                <div>
-                  <span className="font-bold block text-slate-800">বেতন স্কেল:</span>
-                  <span>{selectedJob.salaryScale}</span>
-                </div>
-                <div>
-                  <span className="font-bold block text-red-600">আবেদনের শেষ তারিখ ও সময়:</span>
-                  <span className="font-bold">{selectedJob.deadline}</span>
-                </div>
+              <div className="space-y-3 text-xs text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100 mb-6 leading-relaxed">
+                <p>
+                  <strong>{isBn ? 'পদসংখ্যা:' : 'Vacancies:'}</strong> {selectedJob.vacancies}
+                </p>
+                <p>
+                  <strong>{isBn ? 'বেতন গ্রেড/স্কেল:' : 'Salary Grade:'}</strong> {selectedJob.salaryScale}
+                </p>
+                <p>
+                  <strong>{isBn ? 'আবেদনের শেষ তারিখ:' : 'Deadline:'}</strong> {selectedJob.deadline}
+                </p>
+                <p>
+                  <strong>{isBn ? 'শিক্ষাগত যোগ্যতা:' : 'Required Qualification:'}</strong> {selectedJob.qualification}
+                </p>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex items-center gap-3">
+                <a
+                  href={selectedJob.applicationLink || '#'}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex-1 py-2.5 bg-[#007bff] hover:bg-[#0056b3] text-white text-center font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
+                >
+                  <span>{isBn ? 'অনলাইনে আবেদন করুন' : 'Apply Online'}</span>
+                  <FaExternalLinkAlt className="w-3.5 h-3.5" />
+                </a>
                 <button
                   onClick={() => setSelectedJob(null)}
-                  className="flex-1 py-2 rounded-xl border border-slate-300 text-slate-700 font-semibold text-xs hover:bg-slate-100"
+                  className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl"
                 >
-                  বন্ধ করুন
+                  {isBn ? 'বন্ধ করুন' : 'Close'}
                 </button>
-                <a
-                  href={selectedJob.applicationLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 py-2 bg-[#007bff] hover:bg-[#0056b3] text-white text-xs font-bold rounded-xl text-center flex items-center justify-center gap-1.5 shadow"
-                >
-                  <span>অনলাইনে আবেদন করুন</span>
-                  <FaExternalLinkAlt className="w-3 h-3" />
-                </a>
               </div>
             </div>
           </div>

@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { FaGraduationCap, FaCheckCircle, FaArrowRight } from 'react-icons/fa';
 import { IoClose } from 'react-icons/io5';
 import { SAMPLE_COURSES, Course } from '../data/examData';
+import { useLanguage } from '../context/LanguageContext';
 
 interface CourseCatalogSectionProps {
   onEnrollCourse: (course: Course) => void;
@@ -13,13 +14,15 @@ interface CourseCatalogSectionProps {
 export default function CourseCatalogSection({ onEnrollCourse }: CourseCatalogSectionProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeCourseDetails, setActiveCourseDetails] = useState<Course | null>(null);
+  const { lang, t } = useLanguage();
+  const isBn = lang === 'bn';
 
   const categories = [
-    { id: 'all', label: 'সকল কোর্স' },
-    { id: 'primary', label: 'প্রাইমারি শিক্ষক' },
-    { id: 'bcs', label: 'বিসিএস প্রিলি' },
-    { id: 'ntrca', label: 'শিক্ষক নিবন্ধন' },
-    { id: 'bank', label: 'ব্যাংক অফিসার' },
+    { id: 'all', label: isBn ? 'সকল কোর্স' : 'All Courses' },
+    { id: 'primary', label: isBn ? 'প্রাইমারি শিক্ষক' : 'Primary Teacher' },
+    { id: 'bcs', label: isBn ? 'বিসিএস প্রিলি' : 'BCS Preli' },
+    { id: 'ntrca', label: isBn ? 'শিক্ষক নিবন্ধন' : 'NTRCA' },
+    { id: 'bank', label: isBn ? 'ব্যাংক অফিসার' : 'Bank Officer' },
   ];
 
   const filteredCourses =
@@ -33,11 +36,11 @@ export default function CourseCatalogSection({ onEnrollCourse }: CourseCatalogSe
         
         <div className="text-center mb-10">
           <span className="text-xs font-bold text-[#007bff] bg-blue-50 border border-blue-200 px-3 py-1 rounded-full uppercase tracking-wider">
-            বিদ্যাবাড়ি স্পেশাল কোর্স উইং
+            {t.courses.badge}
           </span>
-          <h2 className="bijoy-section-title mt-2">সেরা চাকরি প্রস্তুতি লাইভ ব্যাচসমূহ</h2>
+          <h2 className="bijoy-section-title mt-2">{t.courses.title}</h2>
           <p className="text-sm text-slate-600 max-w-xl mx-auto -mt-6">
-            দেশের শীর্ষস্থানীয় বিসিএস ক্যাডার ও অভিজ্ঞ শিক্ষক মণ্ডলীর সরাসরি তত্ত্বাবধানে লাইভ ক্লাস ও পরীক্ষা।
+            {t.courses.subtitle}
           </p>
         </div>
 
@@ -97,15 +100,15 @@ export default function CourseCatalogSection({ onEnrollCourse }: CourseCatalogSe
                   {/* Highlights Grid */}
                   <div className="grid grid-cols-3 gap-2 py-3 px-3 bg-slate-50 rounded-xl mb-4 border border-slate-100 text-center">
                     <div>
-                      <span className="block text-xs text-slate-500">লাইভ ক্লাস</span>
-                      <span className="font-bold text-sm text-slate-800">{course.totalClasses}+ টি</span>
+                      <span className="block text-xs text-slate-500">{isBn ? 'লাইভ ক্লাস' : 'Classes'}</span>
+                      <span className="font-bold text-sm text-slate-800">{course.totalClasses}+ {isBn ? 'টি' : ''}</span>
                     </div>
                     <div className="border-x border-slate-200">
-                      <span className="block text-xs text-slate-500">মডেল টেস্ট</span>
-                      <span className="font-bold text-sm text-[#007bff]">{course.totalExams}+ টি</span>
+                      <span className="block text-xs text-slate-500">{isBn ? 'মডেল টেস্ট' : 'Mock Tests'}</span>
+                      <span className="font-bold text-sm text-[#007bff]">{course.totalExams}+ {isBn ? 'টি' : ''}</span>
                     </div>
                     <div>
-                      <span className="block text-xs text-slate-500">শিক্ষার্থী</span>
+                      <span className="block text-xs text-slate-500">{isBn ? 'শিক্ষার্থী' : 'Students'}</span>
                       <span className="font-bold text-sm text-slate-800">{course.enrolledStudents}+</span>
                     </div>
                   </div>
@@ -142,13 +145,13 @@ export default function CourseCatalogSection({ onEnrollCourse }: CourseCatalogSe
                       onClick={() => setActiveCourseDetails(course)}
                       className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
                     >
-                      সিলেবাস দেখুন
+                      {isBn ? 'সিলেবাস দেখুন' : 'Syllabus'}
                     </button>
                     <button
                       onClick={() => onEnrollCourse(course)}
                       className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#007bff] to-[#0056b3] hover:from-[#0056b3] hover:to-[#004085] text-white text-xs sm:text-sm font-bold shadow-md transition-all flex items-center gap-1.5"
                     >
-                      <span>ভর্তি হন</span>
+                      <span>{t.courses.enrollBtn}</span>
                       <FaArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>

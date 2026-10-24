@@ -2,19 +2,14 @@
 
 import React, { useState } from 'react';
 import {
-  FaGraduationCap,
-  FaBookOpen,
-  FaAward,
-  FaBell,
-  FaCalendarAlt,
-  FaShoppingBag,
   FaFire,
   FaSignOutAlt,
   FaUserCircle
 } from 'react-icons/fa';
-import { FaLayerGroup } from 'react-icons/fa6';
 import { HiBars3 } from 'react-icons/hi2';
 import { IoClose } from 'react-icons/io5';
+import ExamSebaLogo from './ExamSebaLogo';
+import { useLanguage } from '../context/LanguageContext';
 
 interface NavbarProps {
   onOpenExamModal: (examId?: string) => void;
@@ -37,16 +32,17 @@ export default function Navbar({
 }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const { lang, toggleLang, t } = useLanguage();
 
   const navLinks = [
-    { id: 'home', label: 'Home', icon: FaLayerGroup },
-    { id: 'exams', label: 'Exams', icon: FaAward },
-    { id: 'courses', label: 'কোর্সসমূহ', icon: FaGraduationCap },
-    { id: 'studyroom', label: 'ফ্রি স্টাডি রুম', icon: FaBookOpen },
-    { id: 'job_alert', label: 'Job Alert', icon: FaBell },
-    { id: 'leaderboard', label: 'লিডারবোর্ড', icon: FaFire },
-    { id: 'routine', label: 'রুটিন ও নোটিশ', icon: FaCalendarAlt },
-    { id: 'books', label: 'বই সম্ভার', icon: FaShoppingBag },
+    { id: 'home', label: t.nav.home },
+    { id: 'exams', label: t.nav.exams },
+    { id: 'courses', label: t.nav.courses },
+    { id: 'studyroom', label: t.nav.studyroom },
+    { id: 'job_alert', label: t.nav.job_alert },
+    { id: 'leaderboard', label: t.nav.leaderboard },
+    { id: 'routine', label: t.nav.routine },
+    { id: 'books', label: t.nav.books },
   ];
 
   const handleNavClick = (id: string) => {
@@ -60,26 +56,39 @@ export default function Navbar({
 
   return (
     <>
-      {/* Top Banner Notice (Biddabari style alert bar) */}
-      <div className="bg-[#004085] text-white text-xs md:text-sm py-1.5 px-4 font-medium flex items-center justify-between border-b border-blue-400/20">
-        <div className="container mx-auto flex items-center justify-between">
+      {/* Top Banner Notice (Biddabari / Bijoyjatra style alert bar) */}
+      <div className="bg-[#004085] text-white text-xs md:text-sm py-1.5 px-4 font-medium border-b border-blue-400/20">
+        <div className="container mx-auto flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap">
             <span className="bg-amber-400 text-slate-900 px-2 py-0.5 rounded-full text-xs font-bold animate-pulse">
-              লাইভ আপডেট
+              {t.nav.liveUpdate}
             </span>
             <span className="truncate">
-              ⚡ ৪৭তম বিসিএস ও প্রাইমারি ৩য় ধাপের পূর্ণাঙ্গ লাইভ মডেল টেস্ট চলছে! ফ্রি অংশ নিন।
+              {t.nav.topNotice}
             </span>
           </div>
-          <div className="hidden md:flex items-center gap-4 text-xs text-blue-100">
-            <span>হেল্পলাইন: ০৯৬১-২০০৩০০</span>
-            <span>|</span>
-            <span>সকাল ৯টা - রাত ১০টা</span>
+
+          <div className="flex items-center gap-3 text-xs text-blue-100 shrink-0">
+            <span className="hidden md:inline">{t.nav.helpline}</span>
+            <span className="hidden md:inline">|</span>
+            <span className="hidden md:inline">{t.nav.hours}</span>
+            <span className="hidden md:inline">|</span>
+
+            {/* Language Toggle Button */}
+            <button
+              onClick={toggleLang}
+              className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-2.5 py-0.5 rounded-full text-xs shadow transition-all flex items-center gap-1 border border-amber-300 hover:scale-105"
+              title="Change Language / ভাষা পরিবর্তন করুন"
+              aria-label="Toggle language between Bangla and English"
+            >
+              <span>🌐</span>
+              <span>{t.nav.switchLang}</span>
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Main Navbar - Exact Bijoyjatra styling */}
+      {/* Main Navbar */}
       <header className="navbar-custom">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between min-h-[68px] gap-2">
@@ -93,32 +102,21 @@ export default function Navbar({
               {mobileMenuOpen ? <IoClose size={26} /> : <HiBars3 size={26} />}
             </button>
 
-            {/* Brand Logo */}
+            {/* Brand Logo - default Bangla, updates to English when lang changes */}
             <a
               href="#"
               onClick={(e) => {
                 e.preventDefault();
                 handleNavClick('home');
               }}
-              className="flex items-center gap-2.5 text-white font-bold text-xl md:text-2xl tracking-wide group"
+              className="group py-1"
             >
-              <div className="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/30 text-white shadow-inner group-hover:scale-105 transition-all">
-                <FaGraduationCap className="w-6 h-6 text-white" />
-              </div>
-              <div className="flex flex-col leading-tight">
-                <span className="font-extrabold text-white group-hover:text-blue-100 transition-colors">
-                  JobQuizTest
-                </span>
-                <span className="text-[10px] text-blue-100 tracking-wider font-medium">
-                  এক্সাম সেবা পোর্টাল
-                </span>
-              </div>
+              <ExamSebaLogo lang={lang} theme="dark" size="md" />
             </a>
 
-            {/* Desktop Navigation Links */}
+            {/* Desktop Navigation Links - CLEAN TEXT (No extra icons) */}
             <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
               {navLinks.map((link) => {
-                const Icon = link.icon;
                 const isActive = activeSection === link.id;
                 return (
                   <button
@@ -126,7 +124,6 @@ export default function Navbar({
                     onClick={() => handleNavClick(link.id)}
                     className={`nav-link-custom ${isActive ? 'active' : ''}`}
                   >
-                    <Icon className="w-4 h-4 opacity-90" />
                     <span>{link.label}</span>
                   </button>
                 );
@@ -142,62 +139,52 @@ export default function Navbar({
                 className="hidden sm:inline-flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold px-3.5 py-1.5 rounded-full text-xs md:text-sm shadow-md transition-transform hover:scale-105"
               >
                 <FaFire className="w-4 h-4 text-red-600 animate-bounce" />
-                <span>লাইভ এক্সাম</span>
+                <span>{t.nav.liveExamBtn}</span>
               </button>
 
-              {/* Profile or Login */}
+              {/* User Profile or Login CTA */}
               {currentUser ? (
                 <div className="relative">
                   <button
                     onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                    className="flex items-center gap-2 bg-white/15 hover:bg-white/25 border border-white/30 text-white px-3 py-1.5 rounded-full text-sm font-semibold transition-all shadow-sm"
+                    className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-xl border border-white/20 text-white text-xs font-semibold transition-colors"
                   >
-                    <div className="w-7 h-7 rounded-full bg-white text-[#007bff] font-bold flex items-center justify-center text-xs shadow-sm">
+                    <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center font-bold text-xs uppercase shadow">
                       {currentUser.name.charAt(0)}
                     </div>
-                    <span className="max-w-[90px] truncate hidden md:inline">
-                      {currentUser.name.split(' ')[0]}
-                    </span>
+                    <span className="hidden sm:inline max-w-[100px] truncate">{currentUser.name}</span>
                   </button>
 
-                  {/* Profile Dropdown Menu */}
                   {profileDropdownOpen && (
-                    <div
-                      className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl py-2 z-50 border border-slate-100 animate-in fade-in zoom-in-95 duration-150"
-                      onClick={() => setProfileDropdownOpen(false)}
-                    >
-                      <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/70">
-                        <p className="font-bold text-slate-800 text-sm">{currentUser.name}</p>
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+                      <div className="px-4 py-2 border-b border-slate-100">
+                        <p className="font-bold text-slate-800 text-sm truncate">{currentUser.name}</p>
                         <p className="text-xs text-slate-500">{currentUser.phone}</p>
-                        <span className="inline-block mt-1 px-2 py-0.5 bg-blue-50 text-[#007bff] text-[11px] font-semibold rounded-md border border-blue-200">
+                        <span className="inline-block mt-1 text-[10px] bg-blue-50 text-[#007bff] font-bold px-2 py-0.5 rounded">
                           {currentUser.batch}
                         </span>
                       </div>
-
+                      
                       <button
-                        onClick={onOpenDashboard}
-                        className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-blue-50 hover:text-[#007bff] flex items-center gap-2.5 transition-colors"
+                        onClick={() => {
+                          setProfileDropdownOpen(false);
+                          onOpenDashboard();
+                        }}
+                        className="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-blue-50 hover:text-[#007bff] flex items-center gap-2 font-medium"
                       >
-                        <FaUserCircle className="w-4 h-4 text-[#007bff]" />
-                        <span>শিক্ষার্থী ড্যাশবোর্ড</span>
+                        <FaUserCircle className="w-4 h-4" />
+                        <span>{t.nav.dashboardBtn}</span>
                       </button>
 
                       <button
-                        onClick={() => onOpenExamModal()}
-                        className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-blue-50 hover:text-[#007bff] flex items-center gap-2.5 transition-colors"
-                      >
-                        <FaAward className="w-4 h-4 text-[#007bff]" />
-                        <span>আমার পরীক্ষা ও ফলাফল</span>
-                      </button>
-
-                      <div className="border-t border-slate-100 my-1"></div>
-
-                      <button
-                        onClick={onLogout}
-                        className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2.5 transition-colors font-medium"
+                        onClick={() => {
+                          setProfileDropdownOpen(false);
+                          onLogout();
+                        }}
+                        className="w-full text-left px-4 py-2 text-xs text-red-600 hover:bg-red-50 flex items-center gap-2 font-medium border-t border-slate-100"
                       >
                         <FaSignOutAlt className="w-4 h-4" />
-                        <span>লগআউট করুন</span>
+                        <span>{t.nav.logout}</span>
                       </button>
                     </div>
                   )}
@@ -206,48 +193,55 @@ export default function Navbar({
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={() => onOpenAuthModal('login')}
-                    className="bg-white/10 hover:bg-white/20 text-white font-semibold px-3 py-1.5 rounded-full text-xs md:text-sm border border-white/30 transition-all"
+                    className="px-3 py-1.5 text-xs font-bold text-white hover:text-blue-100 transition-colors"
                   >
-                    Login
+                    {t.nav.login}
                   </button>
                   <button
                     onClick={() => onOpenAuthModal('signup')}
-                    className="bg-white text-[#007bff] hover:bg-blue-50 font-bold px-3.5 py-1.5 rounded-full text-xs md:text-sm shadow-md transition-all hidden sm:inline-block"
+                    className="px-3.5 py-1.5 text-xs font-bold bg-white text-[#007bff] hover:bg-blue-50 rounded-lg shadow-sm transition-all"
                   >
-                    Create Account
+                    {t.nav.signup}
                   </button>
                 </div>
               )}
+
             </div>
           </div>
         </div>
       </header>
 
-      {/* Mobile Drawer Overlay */}
-      {mobileMenuOpen && (
-        <div
-          onClick={() => setMobileMenuOpen(false)}
-          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 lg:hidden transition-opacity"
-        />
-      )}
-
-      {/* Mobile Navigation Drawer */}
+      {/* Mobile Drawer Navigation */}
       <div
-        className={`fixed top-0 left-0 bottom-0 w-[290px] bg-gradient-to-b from-[#007bff] to-[#0056b3] text-white z-50 transform transition-transform duration-300 ease-in-out lg:hidden shadow-2xl flex flex-col ${
+        className={`fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden transition-opacity duration-300 ${
+          mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => setMobileMenuOpen(false)}
+      />
+
+      <div
+        className={`fixed top-0 left-0 bottom-0 w-72 bg-[#004085] text-white z-50 lg:hidden transform transition-transform duration-300 ease-in-out flex flex-col ${
           mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="p-4 border-b border-white/15 flex items-center justify-between">
+          <ExamSebaLogo lang={lang} theme="dark" size="sm" />
           <div className="flex items-center gap-2">
-            <FaGraduationCap className="w-6 h-6 text-white" />
-            <span className="font-extrabold text-lg text-white">JobQuizTest</span>
+            <button
+              onClick={toggleLang}
+              className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-2.5 py-0.5 rounded-full text-xs shadow flex items-center gap-1"
+              aria-label="Toggle language"
+            >
+              <span>🌐</span>
+              <span>{t.nav.switchLang}</span>
+            </button>
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-1 rounded-full text-white/80 hover:text-white"
+            >
+              <IoClose size={22} />
+            </button>
           </div>
-          <button
-            onClick={() => setMobileMenuOpen(false)}
-            className="p-1 rounded-full text-white/80 hover:text-white"
-          >
-            <IoClose size={22} />
-          </button>
         </div>
 
         {/* User Card inside mobile menu */}
@@ -263,7 +257,7 @@ export default function Navbar({
                 }}
                 className="mt-2 text-xs bg-white text-[#007bff] px-3 py-1 rounded-md font-bold inline-block"
               >
-                ড্যাশবোর্ড দেখুন
+                {t.nav.dashboardBtn}
               </button>
             </div>
           ) : (
@@ -275,7 +269,7 @@ export default function Navbar({
                 }}
                 className="flex-1 py-1.5 bg-white text-[#007bff] text-xs font-bold rounded-lg text-center"
               >
-                লগইন
+                {t.nav.login}
               </button>
               <button
                 onClick={() => {
@@ -284,25 +278,24 @@ export default function Navbar({
                 }}
                 className="flex-1 py-1.5 bg-blue-600 border border-white/30 text-white text-xs font-bold rounded-lg text-center"
               >
-                অ্যাকাউন্ট খুলুন
+                {t.nav.signup}
               </button>
             </div>
           )}
         </div>
 
+        {/* Clean text nav links in drawer (No icons) */}
         <nav className="p-3 space-y-1 overflow-y-auto flex-1">
           {navLinks.map((link) => {
-            const Icon = link.icon;
             const isActive = activeSection === link.id;
             return (
               <button
                 key={link.id}
                 onClick={() => handleNavClick(link.id)}
-                className={`w-full text-left px-4 py-3 rounded-xl text-sm font-semibold flex items-center gap-3 transition-colors ${
+                className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
                   isActive ? 'bg-white/20 text-white' : 'text-blue-50 hover:bg-white/10'
                 }`}
               >
-                <Icon className="w-5 h-5 opacity-90" />
                 <span>{link.label}</span>
               </button>
             );
@@ -318,7 +311,7 @@ export default function Navbar({
             className="w-full bg-amber-400 text-slate-900 font-bold py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 shadow-lg"
           >
             <FaFire className="w-4 h-4 text-red-600" />
-            <span>লাইভ পরীক্ষা শুরু করুন</span>
+            <span>{t.nav.liveExamBtn}</span>
           </button>
         </div>
       </div>

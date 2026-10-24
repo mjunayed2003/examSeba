@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { FaCalendarDays, FaBell, FaRegClock } from 'react-icons/fa6';
 import { IoClose } from 'react-icons/io5';
 import { SAMPLE_NOTICES, Notice } from '../data/examData';
+import { useLanguage } from '../context/LanguageContext';
 
 interface RoutineNoticeSectionProps {
   onStartExam: () => void;
@@ -11,38 +12,40 @@ interface RoutineNoticeSectionProps {
 
 export default function RoutineNoticeSection({ onStartExam }: RoutineNoticeSectionProps) {
   const [selectedNotice, setSelectedNotice] = useState<Notice | null>(null);
+  const { lang, t } = useLanguage();
+  const isBn = lang === 'bn';
 
   const routineItems = [
     {
-      date: '২৪ অক্টোবর ২০২৬ (আজ)',
-      time: 'রাত ৯:০০ টা',
-      batch: '৪৭তম বিসিএস বুলেট লাইভ ব্যাচ',
-      topic: 'পূর্ণাঙ্গ বিসিএস প্রিলিমিনারি মডেল টেস্ট (২০০ নম্বর)',
-      status: 'লাইভ চলছে',
+      date: isBn ? '২৪ অক্টোবর ২০২৬ (আজ)' : '24 October 2026 (Today)',
+      time: isBn ? 'রাত ৯:০০ টা' : '9:00 PM',
+      batch: isBn ? '৪৭তম বিসিএস বুলেট লাইভ ব্যাচ' : '47th BCS Bullet Live Batch',
+      topic: isBn ? 'পূর্ণাঙ্গ বিসিএস প্রিলিমিনারি মডেল টেস্ট (২০০ নম্বর)' : 'Full BCS Preliminary Model Test (200 Marks)',
+      status: isBn ? 'লাইভ চলছে' : 'Live Now',
       statusClass: 'bg-emerald-100 text-emerald-800 border-emerald-300 animate-pulse',
     },
     {
-      date: '২৫ অক্টোবর ২০২৬ (আগামীকাল)',
-      time: 'সকাল ১০:০০ টা',
-      batch: '১৯তম NTRCA শিক্ষক নিবন্ধন ব্যাচ',
-      topic: 'বাংলা ব্যাকরণ ও সাধারণ জ্ঞান স্পেশাল টেস্ট (৫০ নম্বর)',
-      status: 'আসন্ন',
+      date: isBn ? '২৫ অক্টোবর ২০২৬ (আগামীকাল)' : '25 October 2026 (Tomorrow)',
+      time: isBn ? 'সকাল ১০:০০ টা' : '10:00 AM',
+      batch: isBn ? '১৯তম NTRCA শিক্ষক নিবন্ধন ব্যাচ' : '19th NTRCA Registration Batch',
+      topic: isBn ? 'বাংলা ব্যাকরণ ও সাধারণ জ্ঞান স্পেশাল টেস্ট (৫০ নম্বর)' : 'Bengali Grammar & GK Special Test (50 Marks)',
+      status: isBn ? 'আসন্ন' : 'Upcoming',
       statusClass: 'bg-blue-100 text-blue-800 border-blue-200',
     },
     {
-      date: '২৬ অক্টোবর ২০২৬',
-      time: 'দুপুর ৩:০০ টা',
-      batch: 'প্রাইমারি স্পেশাল গোল্ড ব্যাচ',
-      topic: 'গণিত ও সাধারণ বিজ্ঞান স্পেশাল টেস্ট (৪০ নম্বর)',
-      status: 'আসন্ন',
+      date: isBn ? '২৬ অক্টোবর ২০২৬' : '26 October 2026',
+      time: isBn ? 'দুপুর ৩:০০ টা' : '3:00 PM',
+      batch: isBn ? 'প্রাইমারি স্পেশাল গোল্ড ব্যাচ' : 'Primary Special Gold Batch',
+      topic: isBn ? 'গণিত ও সাধারণ বিজ্ঞান স্পেশাল টেস্ট (৪০ নম্বর)' : 'Math & General Science Special Test (40 Marks)',
+      status: isBn ? 'আসন্ন' : 'Upcoming',
       statusClass: 'bg-slate-100 text-slate-700 border-slate-200',
     },
     {
-      date: '২৭ অক্টোবর ২০২৬',
-      time: 'সন্ধ্যা ৭:৩০ টা',
-      batch: 'কম্বাইন্ড ব্যাংক অফিসার ব্যাচ',
-      topic: 'Quantitative Aptitude & Banking General Knowledge',
-      status: 'আসন্ন',
+      date: isBn ? '২৭ অক্টোবর ২০২৬' : '27 October 2026',
+      time: isBn ? 'সন্ধ্যা ৭:৩০ টা' : '7:30 PM',
+      batch: isBn ? 'কম্বাইন্ড ব্যাংক অফিসার ব্যাচ' : 'Combined Bank Officer Batch',
+      topic: isBn ? 'Quantitative Aptitude & Banking General Knowledge' : 'Quantitative Aptitude & Banking GK (50 Marks)',
+      status: isBn ? 'আসন্ন' : 'Upcoming',
       statusClass: 'bg-slate-100 text-slate-700 border-slate-200',
     },
   ];
@@ -53,11 +56,11 @@ export default function RoutineNoticeSection({ onStartExam }: RoutineNoticeSecti
         
         <div className="text-center mb-12">
           <span className="text-xs font-bold text-[#007bff] bg-blue-50 border border-blue-200 px-3 py-1 rounded-full uppercase tracking-wider">
-            সাপ্তাহিক ও মাসিক শিডিউল
+            {t.routine.badge}
           </span>
-          <h2 className="bijoy-section-title mt-2">পরীক্ষার রুটিন ও নোটিশ বোর্ড</h2>
+          <h2 className="bijoy-section-title mt-2">{t.routine.title}</h2>
           <p className="text-sm text-slate-600 max-w-xl mx-auto -mt-6">
-            সকল ব্যাচের পরীক্ষার সময়সূচি এবং জরুরি ঘোষণা এক সাথে জানুন।
+            {t.routine.subtitle}
           </p>
         </div>
 
@@ -68,9 +71,9 @@ export default function RoutineNoticeSection({ onStartExam }: RoutineNoticeSecti
             <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <FaCalendarDays className="w-4 h-4 text-[#007bff]" />
-                <span>আসন্ন মডেল টেস্টের রুটিন</span>
+                <span>{t.routine.upcomingRoutine}</span>
               </span>
-              <span className="text-xs text-slate-500 font-normal">রিয়েল-টাইম আপডেট</span>
+              <span className="text-xs text-slate-500 font-normal">{t.routine.realtimeUpdate}</span>
             </h3>
 
             <div className="space-y-3">
@@ -107,7 +110,7 @@ export default function RoutineNoticeSection({ onStartExam }: RoutineNoticeSecti
                     onClick={onStartExam}
                     className="px-4 py-2 rounded-xl bg-[#007bff] hover:bg-[#0056b3] text-white font-bold text-xs shadow-sm self-start sm:self-center transition-transform hover:scale-105 shrink-0"
                   >
-                    পরীক্ষায় যান
+                    {t.routine.goToExam}
                   </button>
                 </div>
               ))}
@@ -118,7 +121,7 @@ export default function RoutineNoticeSection({ onStartExam }: RoutineNoticeSecti
           <div className="lg:col-span-4 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
             <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
               <FaBell className="w-4 h-4 text-red-500" />
-              <span>জরুরি নোটিশ বোর্ড</span>
+              <span>{t.routine.noticeBoard}</span>
             </h3>
 
             <div className="space-y-4">
@@ -151,7 +154,7 @@ export default function RoutineNoticeSection({ onStartExam }: RoutineNoticeSecti
             <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
                 <span className="text-xs font-bold text-red-600 bg-red-50 px-2.5 py-0.5 rounded-full">
-                  নোটিশ বিজ্ঞপ্তি
+                  {t.routine.noticeTitle}
                 </span>
                 <button
                   onClick={() => setSelectedNotice(null)}
@@ -174,7 +177,7 @@ export default function RoutineNoticeSection({ onStartExam }: RoutineNoticeSecti
                 onClick={() => setSelectedNotice(null)}
                 className="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl"
               >
-                বন্ধ করুন
+                {t.routine.closeBtn}
               </button>
             </div>
           </div>

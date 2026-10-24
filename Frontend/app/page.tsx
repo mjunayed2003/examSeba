@@ -18,8 +18,12 @@ import LiveExamModal, { ExamResult } from './components/LiveExamModal';
 import AuthModal from './components/AuthModal';
 import StudentDashboardModal from './components/StudentDashboardModal';
 import { SAMPLE_EXAMS, Exam, Course } from './data/examData';
+import { useLanguage } from './context/LanguageContext';
 
 export default function Home() {
+  const { lang } = useLanguage();
+  const isBn = lang === 'bn';
+
   // Navigation State
   const [activeSection, setActiveSection] = useState('home');
 
@@ -71,12 +75,20 @@ export default function Home() {
     if (!currentUser) {
       handleOpenAuth('signup');
     } else {
-      showToast(`'${course.title}' কোর্সে সফলভাবে এনরোলমেন্ট রিকুয়েস্ট গ্রহণ করা হয়েছে!`);
+      showToast(
+        isBn
+          ? `'${course.title}' কোর্সে সফলভাবে এনরোলমেন্ট রিকুয়েস্ট গ্রহণ করা হয়েছে!`
+          : `Enrollment request submitted successfully for '${course.title}'!`
+      );
     }
   };
 
   const handleSaveResult = (res: ExamResult) => {
-    showToast(`পরীক্ষা সম্পন্ন! আপনার প্রাপ্ত স্কোর: ${res.finalScore}`);
+    showToast(
+      isBn
+        ? `পরীক্ষা সম্পন্ন! আপনার প্রাপ্ত স্কোর: ${res.finalScore}`
+        : `Exam completed! Your score: ${res.finalScore}`
+    );
   };
 
   return (
@@ -98,7 +110,7 @@ export default function Home() {
         currentUser={currentUser}
         onLogout={() => {
           setCurrentUser(null);
-          showToast('সফলভাবে লগআউট সম্পন্ন হয়েছে।');
+          showToast(isBn ? 'সফলভাবে লগআউট সম্পন্ন হয়েছে।' : 'Logged out successfully.');
         }}
         activeSection={activeSection}
         setActiveSection={setActiveSection}
@@ -179,7 +191,7 @@ export default function Home() {
         onClose={() => setIsAuthModalOpen(false)}
         onLoginSuccess={(user) => {
           setCurrentUser(user);
-          showToast(`স্বাগতম, ${user.name}!`);
+          showToast(isBn ? `স্বাগতম, ${user.name}!` : `Welcome, ${user.name}!`);
         }}
       />
 
@@ -190,7 +202,7 @@ export default function Home() {
         user={currentUser}
         onLogout={() => {
           setCurrentUser(null);
-          showToast('লগআউট সম্পন্ন হয়েছে।');
+          showToast(isBn ? 'লগআউট সম্পন্ন হয়েছে।' : 'Logged out successfully.');
         }}
         onStartExam={() => handleStartExam()}
       />

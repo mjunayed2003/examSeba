@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Hind_Siliguri, Poppins } from "next/font/google";
 import "./globals.css";
+import { LanguageProvider } from "./context/LanguageContext";
 
 const hindSiliguri = Hind_Siliguri({
   subsets: ["bengali", "latin"],
@@ -29,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="bn" className={`scroll-smooth ${hindSiliguri.variable} ${poppins.variable}`}>
       <body className="antialiased min-h-screen flex flex-col bg-[#f8f9fa] text-slate-800">
-        {children}
+        <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
   );

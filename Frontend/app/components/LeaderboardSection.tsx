@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { FaTrophy } from 'react-icons/fa6';
 import { SAMPLE_LEADERBOARD } from '../data/examData';
+import { useLanguage } from '../context/LanguageContext';
 
 interface LeaderboardSectionProps {
   userResult?: unknown;
@@ -11,13 +12,15 @@ interface LeaderboardSectionProps {
 
 export default function LeaderboardSection({}: LeaderboardSectionProps) {
   const [selectedBatch, setSelectedBatch] = useState<string>('all');
+  const { lang, t } = useLanguage();
+  const isBn = lang === 'bn';
 
   const batches = [
-    { id: 'all', label: 'সকল মেধা তালিকা' },
-    { id: 'bcs', label: '৪৭তম বিসিএস' },
-    { id: 'primary', label: 'প্রাইমারি স্পেশাল' },
-    { id: 'bank', label: 'ব্যাংক অফিসার' },
-    { id: 'ntrca', label: '১৯তম NTRCA' },
+    { id: 'all', label: t.leaderboard.filterAll },
+    { id: 'bcs', label: t.leaderboard.filterBcs },
+    { id: 'primary', label: t.leaderboard.filterPrimary },
+    { id: 'bank', label: t.leaderboard.filterBank },
+    { id: 'ntrca', label: t.leaderboard.filterNtrca },
   ];
 
   const filteredEntries =
@@ -37,11 +40,11 @@ export default function LeaderboardSection({}: LeaderboardSectionProps) {
         
         <div className="text-center mb-10">
           <span className="text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full uppercase tracking-wider">
-            রিয়েল-টাইম র‍্যাঙ্কিং
+            {t.leaderboard.badge}
           </span>
-          <h2 className="bijoy-section-title mt-2">লাইভ লিডারবোর্ড ও মেধা তালিকা</h2>
+          <h2 className="bijoy-section-title mt-2">{t.leaderboard.title}</h2>
           <p className="text-sm text-slate-600 max-w-xl mx-auto -mt-6">
-            মডেল টেস্টে শীর্ষস্থান অধিকারী শিক্ষার্থীদের তালিকা। আপনার প্রস্তুতি মূল্যায়ন করুন অন্যদের সাথে।
+            {t.leaderboard.subtitle}
           </p>
         </div>
 
@@ -68,7 +71,7 @@ export default function LeaderboardSection({}: LeaderboardSectionProps) {
           {filteredEntries[1] && (
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center flex flex-col items-center justify-center order-2 md:order-1 relative shadow-sm">
               <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 font-black flex items-center justify-center text-sm mb-2">
-                ২
+                2
               </div>
               <Image
                 src={filteredEntries[1].avatar}
@@ -79,7 +82,7 @@ export default function LeaderboardSection({}: LeaderboardSectionProps) {
               />
               <h4 className="font-bold text-slate-800 text-sm">{filteredEntries[1].studentName}</h4>
               <p className="text-xs text-slate-500 mb-2">{filteredEntries[1].batch}</p>
-              <span className="text-lg font-black text-slate-700">{filteredEntries[1].score} মার্কস</span>
+              <span className="text-lg font-black text-slate-700">{filteredEntries[1].score} {isBn ? 'মার্কস' : 'Marks'}</span>
               <span className="text-[11px] text-slate-400">{filteredEntries[1].timeSpent}</span>
             </div>
           )}
@@ -89,7 +92,7 @@ export default function LeaderboardSection({}: LeaderboardSectionProps) {
             <div className="bg-gradient-to-b from-amber-50 to-amber-100/50 border-2 border-amber-300 rounded-2xl p-6 text-center flex flex-col items-center justify-center order-1 md:order-2 relative shadow-lg transform md:-translate-y-3">
               <div className="absolute -top-3 px-3 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black text-xs uppercase flex items-center gap-1 shadow">
                 <FaTrophy className="w-3.5 h-3.5" />
-                <span>১ম স্থান (টপার)</span>
+                <span>{t.leaderboard.firstPlace}</span>
               </div>
               <Image
                 src={filteredEntries[0].avatar}
@@ -100,7 +103,7 @@ export default function LeaderboardSection({}: LeaderboardSectionProps) {
               />
               <h4 className="font-extrabold text-slate-900 text-base">{filteredEntries[0].studentName}</h4>
               <p className="text-xs text-amber-800 font-medium mb-2">{filteredEntries[0].batch}</p>
-              <span className="text-2xl font-black text-[#007bff]">{filteredEntries[0].score} / ১০</span>
+              <span className="text-2xl font-black text-[#007bff]">{filteredEntries[0].score} / 10</span>
               <span className="text-xs text-slate-600 font-semibold">{filteredEntries[0].timeSpent}</span>
             </div>
           )}
@@ -109,7 +112,7 @@ export default function LeaderboardSection({}: LeaderboardSectionProps) {
           {filteredEntries[2] && (
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center flex flex-col items-center justify-center order-3 md:order-3 relative shadow-sm">
               <div className="w-8 h-8 rounded-full bg-amber-700/20 text-amber-900 font-black flex items-center justify-center text-sm mb-2">
-                ৩
+                3
               </div>
               <Image
                 src={filteredEntries[2].avatar}
@@ -120,7 +123,7 @@ export default function LeaderboardSection({}: LeaderboardSectionProps) {
               />
               <h4 className="font-bold text-slate-800 text-sm">{filteredEntries[2].studentName}</h4>
               <p className="text-xs text-slate-500 mb-2">{filteredEntries[2].batch}</p>
-              <span className="text-lg font-black text-slate-700">{filteredEntries[2].score} মার্কস</span>
+              <span className="text-lg font-black text-slate-700">{filteredEntries[2].score} {isBn ? 'মার্কস' : 'Marks'}</span>
               <span className="text-[11px] text-slate-400">{filteredEntries[2].timeSpent}</span>
             </div>
           )}
@@ -132,12 +135,12 @@ export default function LeaderboardSection({}: LeaderboardSectionProps) {
             <table className="w-full text-left text-xs sm:text-sm">
               <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase text-[11px]">
                 <tr>
-                  <th className="py-3.5 px-4 text-center">র‍্যাঙ্ক</th>
-                  <th className="py-3.5 px-4">শিক্ষার্থীর নাম</th>
-                  <th className="py-3.5 px-4">ব্যাচ ও পরীক্ষা</th>
-                  <th className="py-3.5 px-4 text-center">স্কোর</th>
-                  <th className="py-3.5 px-4 text-center">এক্যুরেসি</th>
-                  <th className="py-3.5 px-4 text-center">গৃহীত সময়</th>
+                  <th className="py-3.5 px-4 text-center">{t.leaderboard.rankCol}</th>
+                  <th className="py-3.5 px-4">{t.leaderboard.nameCol}</th>
+                  <th className="py-3.5 px-4">{t.leaderboard.batchCol}</th>
+                  <th className="py-3.5 px-4 text-center">{t.leaderboard.scoreCol}</th>
+                  <th className="py-3.5 px-4 text-center">{t.leaderboard.accuracyCol}</th>
+                  <th className="py-3.5 px-4 text-center">{t.leaderboard.timeCol}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

@@ -2,58 +2,63 @@
 
 import React from 'react';
 import {
+  FaBroadcastTower,
   FaCheckCircle,
   FaLightbulb,
   FaTachometerAlt,
   FaTrophy,
-  FaChartLine,
-  FaBroadcastTower
+  FaChartLine
 } from 'react-icons/fa';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function FeaturesSection() {
+  const { t } = useLanguage();
+
   const features = [
     {
       icon: FaBroadcastTower,
-      title: 'লাইভ এক্সাম',
-      description:
-        'রিয়েল টাইমে পরীক্ষা দিন এবং তাৎক্ষণিক ফলাফল পান। আমাদের লাইভ এক্সাম সিস্টেম আপনাকে প্রকৃত পরীক্ষার অভিজ্ঞতা দেবে।',
+      title: t.features.card1Title,
+      description: t.features.card1Desc,
     },
     {
       icon: FaCheckCircle,
-      title: 'সঠিক উত্তর ভুল উত্তর মার্কিং',
-      description:
-        'স্বয়ংক্রিয় মার্কিং সিস্টেম যা তাৎক্ষণিকভাবে আপনার সঠিক ও ভুল উত্তর চিহ্নিত করে এবং নম্বর প্রদান করে।',
+      title: t.features.card2Title,
+      description: t.features.card2Desc,
     },
     {
       icon: FaLightbulb,
-      title: 'বিস্তারিত ব্যাখ্যা',
-      description:
-        'প্রতিটি প্রশ্নের জন্য বিস্তারিত ব্যাখ্যা এবং সমাধান পান। আপনার ভুলগুলো থেকে শিখুন এবং উন্নতি করুন।',
+      title: t.features.card3Title,
+      description: t.features.card3Desc,
     },
     {
       icon: FaTachometerAlt,
-      title: 'লাইভ স্কোরবোর্ড',
-      description:
-        'পরীক্ষার সময় রিয়েল টাইমে আপনার স্কোর এবং অগ্রগতি দেখুন। লাইভ আপডেট পেতে থাকুন।',
+      title: t.features.card4Title,
+      description: t.features.card4Desc,
     },
     {
       icon: FaTrophy,
-      title: 'লিডারবোর্ড',
-      description:
-        'অন্য পরীক্ষার্থীদের সাথে আপনার অবস্থান তুলনা করুন। র‍্যাঙ্কিং সিস্টেমে আপনার অবস্থান জানুন।',
+      title: t.features.card5Title,
+      description: t.features.card5Desc,
     },
     {
       icon: FaChartLine,
-      title: 'অগ্রগতি ট্র্যাকিং',
-      description:
-        'আপনার পারফরম্যান্স ট্র্যাক করুন এবং উন্নতির ক্ষেত্রগুলো চিহ্নিত করুন। বিস্তারিত রিপোর্ট ও বিশ্লেষণ পান।',
+      title: t.features.card6Title,
+      description: t.features.card6Desc,
     },
   ];
 
   return (
     <section className="py-20 bg-white border-t border-slate-100">
       <div className="container mx-auto px-4 max-w-6xl">
-        <h2 className="bijoy-section-title">আমাদের বৈশিষ্ট্যসমূহ</h2>
+        <div className="text-center mb-12">
+          <span className="text-xs font-bold text-[#007bff] bg-blue-50 border border-blue-200 px-3 py-1 rounded-full uppercase tracking-wider">
+            {t.features.badge}
+          </span>
+          <h2 className="bijoy-section-title mt-2">{t.features.title}</h2>
+          <p className="text-sm text-slate-600 max-w-xl mx-auto -mt-6">
+            {t.features.subtitle}
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mt-12">
           {features.map((feature, idx) => {

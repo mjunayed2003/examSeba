@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import { IoClose } from 'react-icons/io5';
-import { FaUser, FaLock, FaPhoneAlt, FaGraduationCap } from 'react-icons/fa';
-import { HiSparkles } from 'react-icons/hi2';
+import { FaUser, FaLock, FaPhoneAlt } from 'react-icons/fa';
+import ExamSebaLogo from './ExamSebaLogo';
+import { useLanguage } from '../context/LanguageContext';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -23,24 +24,43 @@ export default function AuthModal({
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [batch, setBatch] = useState('৪৭তম বিসিএস বুলেট ব্যাচ');
+  const [error, setError] = useState('');
+  const { lang, t } = useLanguage();
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+
+    if (mode === 'signup' && !name.trim()) {
+      setError(t.auth.validationName);
+      return;
+    }
+
+    if (!phone || phone.length < 11) {
+      setError(t.auth.validationPhone);
+      return;
+    }
+
+    if (!password || password.length < 6) {
+      setError(t.auth.validationPassword);
+      return;
+    }
+
     onLoginSuccess({
-      name: name || 'আব্দুল্লাহ আল মামুন',
-      phone: phone || '01712345678',
-      batch: batch,
+      name: mode === 'signup' ? name : 'মোঃ আব্দুল্লাহ আল মামুন',
+      phone,
+      batch,
     });
     onClose();
   };
 
   const handleDemoLogin = () => {
     onLoginSuccess({
-      name: 'তানজিলা তাসনিম',
-      phone: '01899123456',
-      batch: '৪৭তম বিসিএস বুলেট ব্যাচ',
+      name: lang === 'bn' ? 'আব্দুল্লাহ আল মামুন' : 'Abdullah Al Mamun',
+      phone: '01712345678',
+      batch: lang === 'bn' ? '৪৭তম বিসিএস বুলেট ব্যাচ' : '47th BCS Bullet Batch',
     });
     onClose();
   };
@@ -59,51 +79,48 @@ export default function AuthModal({
 
         {/* Modal Header */}
         <div className="text-center mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#007bff] to-[#0056b3] text-white flex items-center justify-center mx-auto mb-3 shadow-md shadow-blue-500/20">
-            <FaGraduationCap className="w-6 h-6" />
+          <div className="flex justify-center mb-3">
+            <ExamSebaLogo lang={lang} theme="light" size="md" />
           </div>
           <h3 className="text-2xl font-extrabold text-slate-800">
-            {mode === 'login' ? 'শিক্ষার্থী লগইন' : 'নতুন অ্যাকাউন্ট তৈরি করুন'}
+            {mode === 'login' ? t.auth.loginTitle : t.auth.signupTitle}
           </h3>
           <p className="text-xs text-slate-500 mt-1">
-            {mode === 'login'
-              ? 'আপনার অ্যাকাউন্টে প্রবেশ করে লাইভ পরীক্ষায় অংশ নিন'
-              : 'আজই রেজিস্ট্রেশন করে ফ্রি মডেল টেস্ট দিন'}
+            {mode === 'login' ? t.auth.loginSub : t.auth.signupSub}
           </p>
         </div>
 
         {/* 1-Click Demo Login Trigger */}
         <div className="mb-6 p-3 bg-blue-50/70 rounded-2xl border border-blue-200 text-center">
           <p className="text-xs text-blue-900 font-semibold mb-2">
-            দ্রুত ডেমো অ্যাকাউন্টে প্রবেশ করতে চান?
+            {t.auth.demoText}
           </p>
           <button
             onClick={handleDemoLogin}
             type="button"
-            className="w-full py-2 px-3 bg-[#007bff] hover:bg-[#0056b3] text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5"
+            className="w-full py-2 px-3 bg-[#007bff] hover:bg-[#0056b3] text-white text-xs font-bold rounded-xl shadow-sm transition-all"
           >
-            <HiSparkles className="w-4 h-4 text-amber-300" />
-            <span>১-ক্লিকে ডেমো লগইন করুন</span>
+            <span>{t.auth.demoBtn}</span>
           </button>
         </div>
 
-        <div className="flex items-center gap-3 my-4">
-          <div className="h-[1px] bg-slate-200 flex-1" />
-          <span className="text-[11px] text-slate-400 font-bold uppercase">অথবা ফর্ম পূরণ করুন</span>
-          <div className="h-[1px] bg-slate-200 flex-1" />
-        </div>
+        {error && (
+          <div className="mb-4 p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs font-semibold text-center">
+            {error}
+          </div>
+        )}
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
           {mode === 'signup' && (
             <div>
-              <label className="block text-slate-700 font-bold mb-1">পূর্ণ নাম *</label>
+              <label className="block text-slate-700 font-bold mb-1">{t.auth.nameLabel} *</label>
               <div className="relative">
                 <FaUser className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-3" />
                 <input
                   type="text"
                   required
-                  placeholder="যেমন: তানজিলা তাসনিম"
+                  placeholder={t.auth.namePlaceholder}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-[#007bff]"
@@ -113,13 +130,13 @@ export default function AuthModal({
           )}
 
           <div>
-            <label className="block text-slate-700 font-bold mb-1">মোবাইল নম্বর *</label>
+            <label className="block text-slate-700 font-bold mb-1">{t.auth.phoneLabel} *</label>
             <div className="relative">
               <FaPhoneAlt className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-3" />
               <input
                 type="tel"
                 required
-                placeholder="০১XXXXXXXXX"
+                placeholder={t.auth.phonePlaceholder}
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-[#007bff]"
@@ -128,13 +145,13 @@ export default function AuthModal({
           </div>
 
           <div>
-            <label className="block text-slate-700 font-bold mb-1">পাসওয়ার্ড *</label>
+            <label className="block text-slate-700 font-bold mb-1">{t.auth.passwordLabel} *</label>
             <div className="relative">
               <FaLock className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-3" />
               <input
                 type="password"
                 required
-                placeholder="••••••••"
+                placeholder={t.auth.passwordPlaceholder}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-[#007bff]"
@@ -144,16 +161,16 @@ export default function AuthModal({
 
           {mode === 'signup' && (
             <div>
-              <label className="block text-slate-700 font-bold mb-1">আপনার টার্গেট ব্যাচ *</label>
+              <label className="block text-slate-700 font-bold mb-1">{t.auth.batchLabel} *</label>
               <select
                 value={batch}
                 onChange={(e) => setBatch(e.target.value)}
                 className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-[#007bff] bg-white"
               >
-                <option value="৪৭তম বিসিএস বুলেট ব্যাচ">৪৭তম বিসিএস বুলেট ব্যাচ</option>
-                <option value="প্রাইমারি স্পেশাল গোল্ড ব্যাচ">প্রাইমারি স্পেশাল গোল্ড ব্যাচ</option>
-                <option value="১৯তম শিক্ষক নিবন্ধন ব্যাচ">১৯তম শিক্ষক নিবন্ধন ব্যাচ</option>
-                <option value="কম্বাইন্ড ব্যাংক অফিসার ব্যাচ">কম্বাইন্ড ব্যাংক অফিসার ব্যাচ</option>
+                <option value="৪৭তম বিসিএস বুলেট ব্যাচ">{lang === 'bn' ? '৪৭তম বিসিএস বুলেট ব্যাচ' : '47th BCS Bullet Batch'}</option>
+                <option value="প্রাইমারি স্পেশাল গোল্ড ব্যাচ">{lang === 'bn' ? 'প্রাইমারি স্পেশাল গোল্ড ব্যাচ' : 'Primary Special Gold Batch'}</option>
+                <option value="১৯তম শিক্ষক নিবন্ধন ব্যাচ">{lang === 'bn' ? '১৯তম শিক্ষক নিবন্ধন ব্যাচ' : '19th NTRCA Registration Batch'}</option>
+                <option value="কম্বাইন্ড ব্যাংক অফিসার ব্যাচ">{lang === 'bn' ? 'কম্বাইন্ড ব্যাংক অফিসার ব্যাচ' : 'Combined Bank Officer Batch'}</option>
               </select>
             </div>
           )}
@@ -162,7 +179,7 @@ export default function AuthModal({
             type="submit"
             className="w-full py-2.5 bg-gradient-to-r from-[#007bff] to-[#0056b3] hover:from-[#0056b3] hover:to-[#004085] text-white font-bold rounded-xl shadow-md transition-all text-sm mt-2"
           >
-            {mode === 'login' ? 'লগইন করুন' : 'অ্যাকাউন্ট নিশ্চিত করুন'}
+            {mode === 'login' ? t.auth.submitLogin : t.auth.submitSignup}
           </button>
         </form>
 
@@ -170,24 +187,22 @@ export default function AuthModal({
         <div className="text-center mt-5 text-xs text-slate-600">
           {mode === 'login' ? (
             <p>
-              অ্যাকাউন্ট নেই?{' '}
               <button
                 type="button"
                 onClick={() => setMode('signup')}
                 className="text-[#007bff] font-bold hover:underline"
               >
-                নতুন অ্যাকাউন্ট তৈরি করুন
+                {t.auth.noAccount}
               </button>
             </p>
           ) : (
             <p>
-              ইতিমধ্যে অ্যাকাউন্ট আছে?{' '}
               <button
                 type="button"
                 onClick={() => setMode('login')}
                 className="text-[#007bff] font-bold hover:underline"
               >
-                লগইন করুন
+                {t.auth.hasAccount}
               </button>
             </p>
           )}

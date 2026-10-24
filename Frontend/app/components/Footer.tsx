@@ -2,18 +2,22 @@
 
 import React from 'react';
 import {
-  FaGraduationCap,
   FaPhone,
   FaEnvelope,
   FaLocationDot,
   FaTelegram
 } from 'react-icons/fa6';
+import ExamSebaLogo from './ExamSebaLogo';
+import { useLanguage } from '../context/LanguageContext';
 
 interface FooterProps {
   onNavClick: (sectionId: string) => void;
 }
 
 export default function Footer({ onNavClick }: FooterProps) {
+  const { lang, t } = useLanguage();
+  const isBn = lang === 'bn';
+
   return (
     <footer className="bg-slate-900 text-white pt-16 pb-8 border-t border-slate-800">
       <div className="container mx-auto px-4 max-w-6xl">
@@ -21,16 +25,11 @@ export default function Footer({ onNavClick }: FooterProps) {
           
           {/* Col 1: About */}
           <div>
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md">
-                <FaGraduationCap className="w-5 h-5" />
-              </div>
-              <span className="font-extrabold text-xl text-white tracking-wide">
-                JobQuizTest
-              </span>
+            <div className="mb-4">
+              <ExamSebaLogo lang={lang} theme="dark" size="md" />
             </div>
             <p className="text-xs text-slate-400 leading-relaxed mb-4">
-              বাংলাদেশের প্রথম সারির চাকরি পরীক্ষা প্রস্তুতি ও মডেল টেস্ট প্ল্যাটফর্ম। বিসিএস, প্রাথমিক শিক্ষক নিয়োগ ও ব্যাংকের নির্ভুল মূল্যায়ন।
+              {t.footer.about}
             </p>
             <div className="flex items-center gap-3">
               {/* Facebook SVG */}
@@ -73,7 +72,7 @@ export default function Footer({ onNavClick }: FooterProps) {
           {/* Col 2: Quick Links */}
           <div>
             <h4 className="text-sm font-bold text-white mb-4 uppercase tracking-wider">
-              গুরুত্বপূর্ণ লিংকসমূহ
+              {t.footer.quickLinks}
             </h4>
             <ul className="space-y-2 text-xs text-slate-400">
               <li>
@@ -81,7 +80,7 @@ export default function Footer({ onNavClick }: FooterProps) {
                   onClick={() => onNavClick('home')}
                   className="hover:text-blue-400 transition-colors"
                 >
-                  মূল পাতা (Home)
+                  {t.nav.home}
                 </button>
               </li>
               <li>
@@ -89,7 +88,7 @@ export default function Footer({ onNavClick }: FooterProps) {
                   onClick={() => onNavClick('exams')}
                   className="hover:text-blue-400 transition-colors"
                 >
-                  এক্সাম ব্যাচসমূহ
+                  {t.nav.exams}
                 </button>
               </li>
               <li>
@@ -97,7 +96,7 @@ export default function Footer({ onNavClick }: FooterProps) {
                   onClick={() => onNavClick('courses')}
                   className="hover:text-blue-400 transition-colors"
                 >
-                  কোর্স ও লাইভ ক্লাস
+                  {t.nav.courses}
                 </button>
               </li>
               <li>
@@ -105,7 +104,7 @@ export default function Footer({ onNavClick }: FooterProps) {
                   onClick={() => onNavClick('studyroom')}
                   className="hover:text-blue-400 transition-colors"
                 >
-                  ফ্রি স্টাডি রুম ও PDF
+                  {t.nav.studyroom}
                 </button>
               </li>
               <li>
@@ -113,7 +112,7 @@ export default function Footer({ onNavClick }: FooterProps) {
                   onClick={() => onNavClick('leaderboard')}
                   className="hover:text-blue-400 transition-colors"
                 >
-                  লাইভ লিডারবোর্ড
+                  {t.nav.leaderboard}
                 </button>
               </li>
             </ul>
@@ -122,7 +121,7 @@ export default function Footer({ onNavClick }: FooterProps) {
           {/* Col 3: Exams & Batches */}
           <div>
             <h4 className="text-sm font-bold text-white mb-4 uppercase tracking-wider">
-              পরীক্ষা ক্যাটাগরি
+              {t.footer.categories}
             </h4>
             <ul className="space-y-2 text-xs text-slate-400">
               <li>
@@ -130,7 +129,7 @@ export default function Footer({ onNavClick }: FooterProps) {
                   onClick={() => onNavClick('exams')}
                   className="hover:text-blue-400 transition-colors"
                 >
-                  বিসিএস প্রিলিমিনারি পরীক্ষা
+                  {t.footer.bcsExam}
                 </button>
               </li>
               <li>
@@ -138,7 +137,7 @@ export default function Footer({ onNavClick }: FooterProps) {
                   onClick={() => onNavClick('exams')}
                   className="hover:text-blue-400 transition-colors"
                 >
-                  প্রাথমিক সহকারী শিক্ষক নিয়োগ
+                  {t.footer.primaryExam}
                 </button>
               </li>
               <li>
@@ -146,7 +145,7 @@ export default function Footer({ onNavClick }: FooterProps) {
                   onClick={() => onNavClick('exams')}
                   className="hover:text-blue-400 transition-colors"
                 >
-                  ১৯তম শিক্ষক নিবন্ধন (NTRCA)
+                  {t.footer.ntrcaExam}
                 </button>
               </li>
               <li>
@@ -154,7 +153,7 @@ export default function Footer({ onNavClick }: FooterProps) {
                   onClick={() => onNavClick('exams')}
                   className="hover:text-blue-400 transition-colors"
                 >
-                  কম্বাইন্ড ব্যাংক অফিসার পরীক্ষা
+                  {t.footer.bankExam}
                 </button>
               </li>
               <li>
@@ -162,7 +161,7 @@ export default function Footer({ onNavClick }: FooterProps) {
                   onClick={() => onNavClick('job_alert')}
                   className="hover:text-blue-400 transition-colors"
                 >
-                  চলমান সকল চাকরির খবর
+                  {t.footer.allJobs}
                 </button>
               </li>
             </ul>
@@ -171,14 +170,14 @@ export default function Footer({ onNavClick }: FooterProps) {
           {/* Col 4: Contact & Helpline */}
           <div>
             <h4 className="text-sm font-bold text-white mb-4 uppercase tracking-wider">
-              যোগাযোগ ও হেল্পডেস্ক
+              {t.footer.contact}
             </h4>
             <ul className="space-y-3 text-xs text-slate-400">
               <li className="flex items-start gap-2.5">
                 <FaPhone className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-1" />
                 <div>
-                  <span className="block text-white font-bold">০৯৬১-২০০৩০০, ০১৭XXXXXXXX</span>
-                  <span>(সকাল ৯টা হতে রাত ১০টা)</span>
+                  <span className="block text-white font-bold">0961-200300, 017XXXXXXXX</span>
+                  <span>{t.footer.helplineText}</span>
                 </div>
               </li>
               <li className="flex items-center gap-2.5">
@@ -187,7 +186,7 @@ export default function Footer({ onNavClick }: FooterProps) {
               </li>
               <li className="flex items-start gap-2.5">
                 <FaLocationDot className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-1" />
-                <span>মিরপুর-১০, ঢাকা-১২১৬, বাংলাদেশ</span>
+                <span>{isBn ? 'মিরপুর-১০, ঢাকা-১২১৬, বাংলাদেশ' : 'Mirpur-10, Dhaka-1216, Bangladesh'}</span>
               </li>
             </ul>
           </div>
@@ -196,13 +195,13 @@ export default function Footer({ onNavClick }: FooterProps) {
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-slate-800 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p>© 2026 JobQuizTest | Exam Sheba. সর্বস্বত্ব সংরক্ষিত।</p>
+          <p>{t.footer.copyright}</p>
           <div className="flex items-center gap-4 text-[11px]">
-            <a href="#" className="hover:text-slate-400">গোপনীয়তা নীতি</a>
+            <a href="#" className="hover:text-slate-400">{t.footer.privacy}</a>
             <span>•</span>
-            <a href="#" className="hover:text-slate-400">ব্যবহারের শর্তাবলী</a>
+            <a href="#" className="hover:text-slate-400">{t.footer.terms}</a>
             <span>•</span>
-            <a href="#" className="hover:text-slate-400">রিফান্ড পলিসি</a>
+            <a href="#" className="hover:text-slate-400">{t.footer.refund}</a>
           </div>
         </div>
 

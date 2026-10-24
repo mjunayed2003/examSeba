@@ -15,6 +15,7 @@ import {
 } from 'react-icons/fa6';
 import { IoClose } from 'react-icons/io5';
 import { Exam } from '../data/examData';
+import { useLanguage } from '../context/LanguageContext';
 
 interface LiveExamModalProps {
   exam: Exam | null;
@@ -53,6 +54,8 @@ export default function LiveExamModal({
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showConfirmSubmit, setShowConfirmSubmit] = useState(false);
   const [result, setResult] = useState<ExamResult | null>(null);
+  const { lang, t } = useLanguage();
+  const isBn = lang === 'bn';
 
   const handleSubmitExam = useCallback(() => {
     if (!exam) return;
@@ -166,7 +169,7 @@ export default function LiveExamModal({
     setResult(null);
   };
 
-  const optionLettersBangla = ['ক', 'খ', 'গ', 'ঘ'];
+  const optionLettersBangla = isBn ? ['ক', 'খ', 'গ', 'ঘ'] : ['A', 'B', 'C', 'D'];
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4">
@@ -185,7 +188,7 @@ export default function LiveExamModal({
               <p className="text-xs text-blue-100 flex items-center gap-2 mt-0.5">
                 <span>{exam.batchName}</span>
                 <span>•</span>
-                <span>নেগেটিভ মার্কিং: {exam.negativeMark}</span>
+                <span>{t.liveExam.negativeMarkText}: {exam.negativeMark}</span>
               </p>
             </div>
           </div>
@@ -238,10 +241,10 @@ export default function LiveExamModal({
                         }`}
                       >
                         <FaFlag className="w-3 h-3" />
-                        <span>{flaggedQuestions[currentQ.id] ? 'রিভিউ মার্কড' : 'রিভিউ করুন'}</span>
+                        <span>{flaggedQuestions[currentQ.id] ? t.liveExam.reviewMarked : t.liveExam.reviewBtn}</span>
                       </button>
                       <span className="text-xs text-slate-500 font-bold">
-                        প্রশ্ন {currentQuestionIndex + 1} / {exam.questions.length}
+                        {t.liveExam.questionOf} {currentQuestionIndex + 1} / {exam.questions.length}
                       </span>
                     </div>
                   </div>
@@ -288,7 +291,7 @@ export default function LiveExamModal({
                     disabled={selectedAnswers[currentQ.id] === undefined}
                     className="text-xs text-slate-500 hover:text-red-600 disabled:opacity-30 disabled:hover:text-slate-500 font-medium"
                   >
-                    উত্তর মুছুন (Clear)
+                    {t.liveExam.clearAnswer}
                   </button>
 
                   <div className="flex items-center gap-2">
@@ -298,7 +301,7 @@ export default function LiveExamModal({
                       className="px-3.5 py-1.5 rounded-lg border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-100 disabled:opacity-40 flex items-center gap-1"
                     >
                       <FaArrowLeft className="w-3 h-3" />
-                      <span>পূর্ববর্তী</span>
+                      <span>{t.liveExam.prevBtn}</span>
                     </button>
 
                     {currentQuestionIndex < exam.questions.length - 1 ? (
@@ -306,7 +309,7 @@ export default function LiveExamModal({
                         onClick={() => setCurrentQuestionIndex((prev) => prev + 1)}
                         className="px-4 py-1.5 rounded-lg bg-[#007bff] hover:bg-[#0056b3] text-white text-xs font-semibold flex items-center gap-1 shadow-sm"
                       >
-                        <span>পরবর্তী</span>
+                        <span>{t.liveExam.nextBtn}</span>
                         <FaArrowRight className="w-3 h-3" />
                       </button>
                     ) : (
@@ -314,7 +317,7 @@ export default function LiveExamModal({
                         onClick={() => setShowConfirmSubmit(true)}
                         className="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm animate-bounce"
                       >
-                        পরীক্ষা সমাপ্ত করুন
+                        {t.liveExam.finishBtn}
                       </button>
                     )}
                   </div>
@@ -402,33 +405,32 @@ export default function LiveExamModal({
                   </div>
 
                   <h3 className="text-2xl font-extrabold text-slate-800 mb-1">
-                    {result.isPassed ? 'অভিনন্দন! আপনি উত্তীর্ণ হয়েছেন' : 'পরীক্ষা সম্পন্ন হয়েছে'}
+                    {result.isPassed ? t.liveExam.passedCongrats : t.liveExam.examCompleted}
                   </h3>
                   <p className="text-sm text-slate-500 mb-6">
-                    {result.examTitle} • পাস মার্ক: {exam.passMarks}
+                    {result.examTitle} • {t.liveExam.passMarkText}: {exam.passMarks}
                   </p>
 
                   {/* Score Highlights */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                     <div className="bg-blue-50/70 p-4 rounded-xl border border-blue-100">
-                      <span className="text-xs text-slate-600 block">প্রাপ্ত নম্বর</span>
+                      <span className="text-xs text-slate-600 block">{t.liveExam.obtainedScore}</span>
                       <span className="text-2xl font-black text-[#007bff]">{result.finalScore}</span>
                       <span className="text-[11px] text-slate-500"> / {result.totalQuestions}</span>
                     </div>
                     <div className="bg-emerald-50/70 p-4 rounded-xl border border-emerald-100">
-                      <span className="text-xs text-slate-600 block">সঠিক উত্তর</span>
+                      <span className="text-xs text-slate-600 block">{t.liveExam.correctAnswers}</span>
                       <span className="text-2xl font-black text-emerald-600">{result.correct}</span>
-                      <span className="text-[11px] text-slate-500"> টি প্রশ্ন</span>
+                      <span className="text-[11px] text-slate-500"> {isBn ? 'টি' : ''}</span>
                     </div>
                     <div className="bg-rose-50/70 p-4 rounded-xl border border-rose-100">
-                      <span className="text-xs text-slate-600 block">ভুল উত্তর</span>
+                      <span className="text-xs text-slate-600 block">{t.liveExam.wrongAnswers}</span>
                       <span className="text-2xl font-black text-rose-600">{result.wrong}</span>
                       <span className="text-[11px] text-slate-500"> (-{result.negativeDeduction})</span>
                     </div>
                     <div className="bg-purple-50/70 p-4 rounded-xl border border-purple-100">
-                      <span className="text-xs text-slate-600 block">নির্ভুলতার হার</span>
+                      <span className="text-xs text-slate-600 block">{t.liveExam.accuracyRate}</span>
                       <span className="text-2xl font-black text-purple-600">{result.accuracy}%</span>
-                      <span className="text-[11px] text-slate-500"> এক্যুরেসি</span>
                     </div>
                   </div>
 
@@ -439,7 +441,7 @@ export default function LiveExamModal({
                       className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm flex items-center gap-1.5 transition-colors"
                     >
                       <FaRotateRight className="w-3.5 h-3.5" />
-                      <span>পুনরায় পরীক্ষা দিন</span>
+                      <span>{t.liveExam.retakeBtn}</span>
                     </button>
                     <button
                       onClick={() => {
@@ -449,7 +451,7 @@ export default function LiveExamModal({
                       className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-md transition-transform hover:scale-105"
                     >
                       <FaTrophy className="w-3.5 h-3.5 text-slate-900" />
-                      <span>মেধা তালিকা (Leaderboard) দেখুন</span>
+                      <span>{t.liveExam.viewLeaderboard}</span>
                     </button>
                   </div>
                 </div>
@@ -560,24 +562,24 @@ export default function LiveExamModal({
                 <FaCircleExclamation className="w-5 h-5" />
               </div>
               <h4 className="text-lg font-bold text-slate-800 mb-2">
-                আপনি কি পরীক্ষা সমাপ্ত করতে চান?
+                {t.liveExam.confirmTitle}
               </h4>
               <p className="text-sm text-slate-600 mb-4 leading-relaxed">
-                আপনি <strong>{Object.keys(selectedAnswers).length}</strong> টি প্রশ্নের উত্তর দিয়েছেন। এখনো{' '}
-                <strong>{exam.questions.length - Object.keys(selectedAnswers).length}</strong> টি প্রশ্ন বাকি রয়েছে।
+                {Object.keys(selectedAnswers).length} {t.liveExam.confirmText}{' '}
+                <strong>{exam.questions.length - Object.keys(selectedAnswers).length}</strong>.
               </p>
               <div className="flex gap-3 justify-center">
                 <button
                   onClick={() => setShowConfirmSubmit(false)}
                   className="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 text-xs sm:text-sm font-semibold hover:bg-slate-100"
                 >
-                  পরীক্ষা চালিয়ে যান
+                  {t.liveExam.continueExam}
                 </button>
                 <button
                   onClick={handleSubmitExam}
                   className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold shadow-md"
                 >
-                  হ্যাঁ, নিশ্চিত জমা দিন
+                  {t.liveExam.confirmSubmit}
                 </button>
               </div>
             </div>

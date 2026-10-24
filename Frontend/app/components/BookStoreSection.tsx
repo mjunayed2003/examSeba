@@ -10,11 +10,14 @@ import {
 } from 'react-icons/fa';
 import { IoClose } from 'react-icons/io5';
 import { SAMPLE_BOOKS, Book } from '../data/examData';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function BookStoreSection() {
   const [orderedBooks, setOrderedBooks] = useState<Record<string, boolean>>({});
   const [selectedBookForOrder, setSelectedBookForOrder] = useState<Book | null>(null);
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const { lang, t } = useLanguage();
+  const isBn = lang === 'bn';
 
   const handleOrder = (book: Book) => {
     setSelectedBookForOrder(book);
@@ -39,11 +42,11 @@ export default function BookStoreSection() {
         
         <div className="text-center mb-12">
           <span className="text-xs font-bold text-[#007bff] bg-blue-50 border border-blue-200 px-3 py-1 rounded-full uppercase tracking-wider">
-            বিদ্যাবাড়ি প্রকাশনী ও বই সম্ভার
+            {t.books.badge}
           </span>
-          <h2 className="bijoy-section-title mt-2">চাকরি প্রস্তুতির সেরা বইসমূহ</h2>
+          <h2 className="bijoy-section-title mt-2">{t.books.title}</h2>
           <p className="text-sm text-slate-600 max-w-xl mx-auto -mt-6">
-            বিসিএস ও শিক্ষক নিয়োগের পূর্ণাঙ্গ সিলেবাসভিত্তিক বুলেট ডাইজেস্ট ও প্রশ্নব্যাংক হোম ডেলিভারিতে পান।
+            {t.books.subtitle}
           </p>
         </div>
 
@@ -104,12 +107,12 @@ export default function BookStoreSection() {
                     {isOrdered ? (
                       <>
                         <FaCheck className="w-4 h-4" />
-                        <span>অর্ডার সম্পন্ন হয়েছে</span>
+                        <span>{isBn ? 'অর্ডার সম্পন্ন হয়েছে' : 'Order Placed'}</span>
                       </>
                     ) : (
                       <>
                         <FaShoppingBag className="w-4 h-4" />
-                        <span>এখনই অর্ডার করুন</span>
+                        <span>{t.books.buyNow}</span>
                       </>
                     )}
                   </button>
