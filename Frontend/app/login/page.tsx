@@ -3,8 +3,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { FaPhoneAlt, FaLock, FaUserShield, FaGraduationCap, FaArrowLeft, FaCheckCircle } from 'react-icons/fa';
-import ExamSebaLogo from '../components/ExamSebaLogo';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function LoginPage() {
@@ -12,316 +10,222 @@ export default function LoginPage() {
   const { lang, toggleLang } = useLanguage();
   const isBn = lang === 'bn';
 
-  const [activeTab, setActiveTab] = useState<'student' | 'admin'>('student');
-  const [identifier, setIdentifier] = useState('');
+  const [role, setRole] = useState<'student' | 'admin'>('student');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleStudentLogin = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
     setError('');
 
-    if (!identifier.trim()) {
-      setError(isBn ? 'অনুগ্রহ করে মোবাইল নম্বর প্রদান করুন' : 'Please provide your mobile number');
-      return;
-    }
-    if (password.length < 6) {
-      setError(isBn ? 'পাসওয়ার্ড ন্যূনতম ৬ অক্ষরের হতে হবে' : 'Password must be at least 6 characters');
+    if (!username.trim()) {
+      setError(isBn ? 'অনুগ্রহ করে ইউজারনেম বা মোবাইল নম্বর দিন' : 'Please enter your username');
       return;
     }
 
-    const studentUser = {
-      name: identifier.includes('@') ? 'আব্দুল্লাহ আল মামুন' : 'আব্দুল্লাহ আল মামুন',
-      phone: identifier,
-      batch: '৪৭তম বিসিএস বুলেট ব্যাচ',
-    };
-
-    try {
-      localStorage.setItem('exam_seba_user', JSON.stringify(studentUser));
-      window.dispatchEvent(new Event('exam_seba_auth_change'));
-    } catch {
-      // ignore
-    }
-
-    setSuccessMsg(isBn ? 'লগইন সফল হয়েছে! রিডাইরেক্ট করা হচ্ছে...' : 'Login successful! Redirecting...');
-    setTimeout(() => {
-      router.push('/');
-    }, 800);
-  };
-
-  const handleAdminLogin = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    setError('');
-
-    if (!identifier.trim()) {
-      setError(isBn ? 'অনুগ্রহ করে অ্যাডমিন ইমেইল প্রদান করুন' : 'Please enter admin email');
-      return;
-    }
     if (!password.trim()) {
-      setError(isBn ? 'অনুগ্রহ করে অ্যাডমিন পাসওয়ার্ড প্রদান করুন' : 'Please enter admin password');
+      setError(isBn ? 'অনুগ্রহ করে পাসওয়ার্ড দিন' : 'Please enter your password');
       return;
     }
 
-    const adminSession = {
-      name: 'এডমিন মামুনুর রশিদ',
-      email: identifier,
-      role: 'Super Admin',
-      loggedInAt: new Date().toISOString(),
-    };
+    setLoading(true);
 
-    try {
-      localStorage.setItem('exam_seba_admin', JSON.stringify(adminSession));
-      window.dispatchEvent(new Event('exam_seba_admin_change'));
-    } catch {
-      // ignore
+    if (role === 'admin') {
+      const adminSession = {
+        name: 'এডমিন মামুনুর রশিদ',
+        email: username.includes('@') ? username : 'admin@examsheba.com',
+        role: 'Super Admin',
+        loggedInAt: new Date().toISOString(),
+      };
+      try {
+        localStorage.setItem('exam_seba_admin', JSON.stringify(adminSession));
+        window.dispatchEvent(new Event('exam_seba_admin_change'));
+      } catch {
+        // ignore
+      }
+      setTimeout(() => {
+        router.push('/admin');
+      }, 400);
+    } else {
+      const studentUser = {
+        name: isBn ? 'আব্দুল্লাহ আল মামুন' : 'Abdullah Al Mamun',
+        phone: username,
+        batch: isBn ? '৪৭তম বিসিএস বুলেট ব্যাচ' : '47th BCS Bullet Batch',
+      };
+      try {
+        localStorage.setItem('exam_seba_user', JSON.stringify(studentUser));
+        window.dispatchEvent(new Event('exam_seba_auth_change'));
+      } catch {
+        // ignore
+      }
+      setTimeout(() => {
+        router.push('/');
+      }, 400);
     }
-
-    setSuccessMsg(isBn ? 'অ্যাডমিন ভেরিফিকেশন সফল! প্যানেলে নেওয়া হচ্ছে...' : 'Admin verified! Entering console...');
-    setTimeout(() => {
-      router.push('/admin');
-    }, 800);
   };
 
-  const fillDemoStudent = () => {
-    setIdentifier('01712345678');
-    setPassword('123456');
-    setError('');
-  };
-
-  const fillDemoAdmin = () => {
-    setIdentifier('admin@examsheba.com');
-    setPassword('admin123');
+  const handleQuickFill = () => {
+    if (role === 'admin') {
+      setUsername('admin@examsheba.com');
+      setPassword('admin123');
+    } else {
+      setUsername('01712345678');
+      setPassword('123456');
+    }
     setError('');
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#002b5c] via-[#004085] to-[#0056b3] flex flex-col justify-between p-4 sm:p-6 text-slate-800">
+    <div className="min-h-screen bg-[#f3f4f6] flex flex-col justify-between items-center p-4 sm:p-6 font-sans text-slate-800">
       
-      {/* Top Bar */}
-      <header className="container mx-auto flex items-center justify-between py-2">
+      {/* Top Bar for back & lang switch */}
+      <header className="w-full max-w-md flex items-center justify-between py-2">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-white/90 hover:text-white bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all backdrop-blur-md border border-white/20"
+          className="text-xs text-slate-500 hover:text-slate-800 transition-colors font-medium flex items-center gap-1"
         >
-          <FaArrowLeft className="w-3 h-3" />
-          <span>{isBn ? 'মূল সাইটে ফিরুন' : 'Back to Home'}</span>
+          <span>←</span>
+          <span>{isBn ? 'হোম পেজ' : 'Home'}</span>
         </Link>
 
-        {/* Language Switch */}
-        <button
-          onClick={toggleLang}
-          className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3 py-1 rounded-full text-xs shadow-md transition-all flex items-center gap-1.5 border border-amber-300"
-          aria-label="Toggle Language"
-        >
-          <span>🌐</span>
-          <span>{isBn ? 'English' : 'বাংলা'}</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={handleQuickFill}
+            className="text-[11px] font-semibold text-[#0066ff] hover:underline"
+          >
+            {isBn ? 'ডেমো অটো-ফিল' : 'Auto-fill Demo'}
+          </button>
+          
+          <button
+            type="button"
+            onClick={toggleLang}
+            className="text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white px-2.5 py-1 rounded-md border border-slate-200 shadow-2xs"
+          >
+            {isBn ? 'English' : 'বাংলা'}
+          </button>
+        </div>
       </header>
 
-      {/* Main Login Card */}
-      <main className="container mx-auto flex items-center justify-center my-6">
-        <div className="bg-white rounded-3xl shadow-2xl border border-white/30 max-w-md w-full p-6 sm:p-8 backdrop-blur-xl relative overflow-hidden">
+      {/* Exact Centered Login Box as in user image */}
+      <main className="w-full max-w-sm sm:max-w-md my-auto">
+        <div className="bg-white rounded-2xl p-7 sm:p-10 shadow-sm border border-slate-200/80">
           
-          {/* Decorative background glow */}
-          <div className="absolute -top-16 -right-16 w-36 h-36 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute -bottom-16 -left-16 w-36 h-36 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+          {/* Header Title */}
+          <h1 className="text-2xl sm:text-[28px] font-bold text-slate-900 text-center tracking-tight mb-7">
+            {isBn ? 'Exam System Login' : 'Exam System Login'}
+          </h1>
 
-          {/* Logo & Headline */}
-          <div className="text-center mb-6">
-            <div className="flex justify-center mb-3">
-              <ExamSebaLogo lang={lang} theme="light" size="lg" />
-            </div>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-              {activeTab === 'student'
-                ? (isBn ? 'শিক্ষার্থী লগইন' : 'Student Login')
-                : (isBn ? 'অ্যাডমিন পোর্টাল' : 'Admin Portal')}
-            </h1>
-            <p className="text-xs text-slate-500 mt-1">
-              {activeTab === 'student'
-                ? (isBn ? 'আপনার প্রোফাইলে প্রবেশ করে মডেল টেস্ট শুরু করুন' : 'Log in to continue your model tests & courses')
-                : (isBn ? 'প্রশ্নব্যাংক ও পরীক্ষা নিয়ন্ত্রক এক্সেস' : 'Manage exams, questions, and students')}
-            </p>
-          </div>
-
-          {/* Role Tabs */}
-          <div className="grid grid-cols-2 p-1 bg-slate-100 rounded-2xl mb-6">
+          {/* Role switcher (minimal tab) */}
+          <div className="flex items-center justify-center gap-2 mb-6 text-xs">
             <button
               type="button"
               onClick={() => {
-                setActiveTab('student');
+                setRole('student');
                 setError('');
-                setIdentifier('');
-                setPassword('');
               }}
-              className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-                activeTab === 'student'
-                  ? 'bg-white text-[#007bff] shadow-md'
-                  : 'text-slate-600 hover:text-slate-900'
+              className={`px-3 py-1 rounded-full font-semibold transition-all ${
+                role === 'student'
+                  ? 'bg-blue-50 text-[#0066ff] border border-blue-200'
+                  : 'text-slate-500 hover:text-slate-800'
               }`}
             >
-              <FaGraduationCap className="w-4 h-4" />
-              <span>{isBn ? 'শিক্ষার্থী' : 'Student'}</span>
+              {isBn ? 'শিক্ষার্থী (Student)' : 'Student'}
             </button>
-
             <button
               type="button"
               onClick={() => {
-                setActiveTab('admin');
+                setRole('admin');
                 setError('');
-                setIdentifier('');
-                setPassword('');
               }}
-              className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-                activeTab === 'admin'
-                  ? 'bg-slate-900 text-white shadow-md'
-                  : 'text-slate-600 hover:text-slate-900'
+              className={`px-3 py-1 rounded-full font-semibold transition-all ${
+                role === 'admin'
+                  ? 'bg-slate-900 text-white'
+                  : 'text-slate-500 hover:text-slate-800'
               }`}
             >
-              <FaUserShield className="w-4 h-4" />
-              <span>{isBn ? 'অ্যাডমিন' : 'Admin'}</span>
+              {isBn ? 'অ্যাডমিন (Admin)' : 'Admin'}
             </button>
           </div>
 
-          {/* Quick Demo Fill Buttons */}
-          <div className="mb-4 p-2.5 bg-blue-50/70 border border-blue-200/60 rounded-xl flex items-center justify-between text-xs">
-            <span className="text-slate-600 font-medium">
-              {isBn ? 'টেস্টিং ডেমো একাউন্ট:' : 'Quick Demo Test:'}
-            </span>
-            <button
-              type="button"
-              onClick={activeTab === 'student' ? fillDemoStudent : fillDemoAdmin}
-              className="bg-[#007bff] hover:bg-[#0056b3] text-white px-2.5 py-1 rounded-lg font-bold shadow-sm transition-all"
-            >
-              {isBn ? '১-ক্লিক পূরণ' : '1-Click Auto Fill'}
-            </button>
-          </div>
-
-          {/* Feedback messages */}
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-xs font-bold animate-in fade-in">
+            <div className="mb-5 p-2.5 bg-red-50 border border-red-200 text-red-600 rounded-lg text-xs font-medium text-center">
               {error}
             </div>
           )}
 
-          {successMsg && (
-            <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 text-xs font-bold flex items-center gap-2 animate-in fade-in">
-              <FaCheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span>{successMsg}</span>
-            </div>
-          )}
-
-          {/* Form */}
-          <form
-            onSubmit={activeTab === 'student' ? handleStudentLogin : handleAdminLogin}
-            className="space-y-4"
-          >
+          <form onSubmit={handleLogin} className="space-y-5">
+            {/* Username */}
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                {activeTab === 'student'
-                  ? (isBn ? 'মোবাইল নম্বর / ইমেইল' : 'Mobile Number or Email')
-                  : (isBn ? 'অ্যাডমিন ইমেইল' : 'Admin Email Address')}
+              <label
+                htmlFor="usernameInput"
+                className="block text-sm font-medium text-slate-700 mb-1.5"
+              >
+                {role === 'admin'
+                  ? (isBn ? 'Username / Email' : 'Username')
+                  : (isBn ? 'Username' : 'Username')}
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                  <FaPhoneAlt className="w-3.5 h-3.5" />
-                </div>
-                <input
-                  type="text"
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder={
-                    activeTab === 'student'
-                      ? (isBn ? '০১৭১২-৩৪৫৬৭৮' : '017XXXXXXXX')
-                      : 'admin@examsheba.com'
-                  }
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:bg-white transition-all font-medium"
-                />
-              </div>
+              <input
+                id="usernameInput"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder=""
+                autoComplete="username"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-[#0066ff] focus:ring-1 focus:ring-[#0066ff] text-sm text-slate-800 transition-colors bg-white"
+              />
             </div>
 
+            {/* Password */}
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-bold text-slate-700">
-                  {isBn ? 'পাসওয়ার্ড' : 'Password'}
-                </label>
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    alert(isBn ? 'পাসওয়ার্ড রিসেটের জন্য হেল্পলাইনে যোগাযোগ করুন: 0961-200300' : 'Contact helpline for password reset: 0961-200300');
-                  }}
-                  className="text-[11px] text-[#007bff] hover:underline font-semibold"
-                >
-                  {isBn ? 'পাসওয়ার্ড ভুলে গেছেন?' : 'Forgot password?'}
-                </a>
-              </div>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                  <FaLock className="w-3.5 h-3.5" />
-                </div>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#007bff] focus:bg-white transition-all font-medium"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between text-xs text-slate-600">
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded text-[#007bff] focus:ring-blue-400 w-3.5 h-3.5"
-                />
-                <span>{isBn ? 'আমাকে মনে রাখুন' : 'Remember me'}</span>
+              <label
+                htmlFor="passwordInput"
+                className="block text-sm font-medium text-slate-700 mb-1.5"
+              >
+                {isBn ? 'Password' : 'Password'}
               </label>
+              <input
+                id="passwordInput"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder=""
+                autoComplete="current-password"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-[#0066ff] focus:ring-1 focus:ring-[#0066ff] text-sm text-slate-800 transition-colors bg-white"
+              />
             </div>
 
+            {/* Blue Submit Button */}
             <button
               type="submit"
-              className={`w-full py-3 rounded-xl font-black text-xs sm:text-sm transition-all shadow-lg hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 ${
-                activeTab === 'student'
-                  ? 'bg-[#007bff] hover:bg-[#0056b3] text-white shadow-blue-500/25'
-                  : 'bg-slate-900 hover:bg-slate-800 text-white shadow-slate-900/25'
-              }`}
+              disabled={loading}
+              className="w-full py-2.5 px-4 bg-[#0066ff] hover:bg-[#0055d4] active:bg-[#0047b8] text-white font-medium text-sm rounded-lg transition-colors shadow-xs flex items-center justify-center cursor-pointer mt-6"
             >
-              <span>
-                {activeTab === 'student'
-                  ? (isBn ? 'লগইন করুন' : 'Sign In as Student')
-                  : (isBn ? 'অ্যাডমিন প্যানেলে প্রবেশ করুন' : 'Enter Admin Console')}
-              </span>
+              {loading
+                ? (isBn ? 'Logging in...' : 'Logging in...')
+                : (isBn ? 'Login' : 'Login')}
             </button>
           </form>
 
-          {/* Bottom Switch to Register */}
-          {activeTab === 'student' ? (
-            <div className="mt-6 pt-5 border-t border-slate-100 text-center text-xs text-slate-600">
-              <span>{isBn ? 'এখনো কোনো একাউন্ট নেই?' : "Don't have an account yet?"} </span>
-              <Link
-                href="/register"
-                className="font-black text-[#007bff] hover:underline"
-              >
-                {isBn ? 'বিনামূল্যে রেজিস্ট্রেশন করুন' : 'Register Free'}
-              </Link>
-            </div>
-          ) : (
-            <div className="mt-6 pt-5 border-t border-slate-100 text-center text-[11px] text-slate-500">
-              <span>🔒 {isBn ? 'শুধুমাত্র অনুমোদিত পরীক্ষা নিয়ন্ত্রক ও প্রশাসকদের জন্য সংরক্ষিত।' : 'Authorized Exam Seba administrators only.'}</span>
-            </div>
-          )}
+          {/* Bottom link: Don't have an account? Sign up */}
+          <div className="mt-6 text-center text-sm text-slate-600">
+            <span>{isBn ? "Don't have an account? " : "Don't have an account? "}</span>
+            <Link
+              href="/register"
+              className="text-[#0066ff] hover:underline font-medium"
+            >
+              {isBn ? 'Sign up' : 'Sign up'}
+            </Link>
+          </div>
 
         </div>
       </main>
 
-      {/* Footer Info */}
-      <footer className="container mx-auto text-center py-2 text-xs text-blue-100">
-        <p>© 2026 {isBn ? 'এক্সাম সেবা' : 'Exam Seba'} — {isBn ? 'সর্বস্বত্ব সংরক্ষিত।' : 'All rights reserved.'}</p>
+      {/* Footer */}
+      <footer className="text-xs text-slate-400 py-3">
+        © 2026 Exam Seba. All rights reserved.
       </footer>
 
     </div>

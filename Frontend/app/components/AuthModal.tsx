@@ -2,8 +2,6 @@
 
 import React, { useState } from 'react';
 import { IoClose } from 'react-icons/io5';
-import { FaUser, FaLock, FaPhoneAlt } from 'react-icons/fa';
-import ExamSebaLogo from './ExamSebaLogo';
 import { useLanguage } from '../context/LanguageContext';
 
 interface AuthModalProps {
@@ -66,106 +64,92 @@ export default function AuthModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-100 relative animate-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl max-w-sm sm:max-w-md w-full p-7 sm:p-10 shadow-lg border border-slate-200/80 relative animate-in zoom-in-95 duration-150">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-1 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+          className="absolute top-4 right-4 p-1.5 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+          aria-label="Close"
         >
-          <IoClose className="w-5 h-5" />
+          <IoClose size={20} />
         </button>
 
         {/* Modal Header */}
-        <div className="text-center mb-6">
-          <div className="flex justify-center mb-3">
-            <ExamSebaLogo lang={lang} theme="light" size="md" />
+        <div className="text-center mb-7">
+          <h2 className="text-2xl sm:text-[28px] font-bold text-slate-900 tracking-tight">
+            {mode === 'login' ? 'Exam System Login' : 'Exam System Sign Up'}
+          </h2>
+          <div className="mt-1 flex items-center justify-center gap-2">
+            <button
+              type="button"
+              onClick={handleDemoLogin}
+              className="text-[11px] font-semibold text-[#0066ff] hover:underline"
+            >
+              {lang === 'bn' ? '১-ক্লিক ডেমো লগইন' : '1-Click Demo Fill'}
+            </button>
           </div>
-          <h3 className="text-2xl font-extrabold text-slate-800">
-            {mode === 'login' ? t.auth.loginTitle : t.auth.signupTitle}
-          </h3>
-          <p className="text-xs text-slate-500 mt-1">
-            {mode === 'login' ? t.auth.loginSub : t.auth.signupSub}
-          </p>
-        </div>
-
-        {/* 1-Click Demo Login Trigger */}
-        <div className="mb-6 p-3 bg-blue-50/70 rounded-2xl border border-blue-200 text-center">
-          <p className="text-xs text-blue-900 font-semibold mb-2">
-            {t.auth.demoText}
-          </p>
-          <button
-            onClick={handleDemoLogin}
-            type="button"
-            className="w-full py-2 px-3 bg-[#007bff] hover:bg-[#0056b3] text-white text-xs font-bold rounded-xl shadow-sm transition-all"
-          >
-            <span>{t.auth.demoBtn}</span>
-          </button>
         </div>
 
         {error && (
-          <div className="mb-4 p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs font-semibold text-center">
+          <div className="mb-4 p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-600 text-xs font-medium text-center">
             {error}
           </div>
         )}
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
+        {/* Form matching screenshot */}
+        <form onSubmit={handleSubmit} className="space-y-5">
           {mode === 'signup' && (
             <div>
-              <label className="block text-slate-700 font-bold mb-1">{t.auth.nameLabel} *</label>
-              <div className="relative">
-                <FaUser className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-3" />
-                <input
-                  type="text"
-                  required
-                  placeholder={t.auth.namePlaceholder}
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-[#007bff]"
-                />
-              </div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                Full Name
+              </label>
+              <input
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-[#0066ff] focus:ring-1 focus:ring-[#0066ff] text-sm text-slate-800 transition-colors bg-white"
+              />
             </div>
           )}
 
           <div>
-            <label className="block text-slate-700 font-bold mb-1">{t.auth.phoneLabel} *</label>
-            <div className="relative">
-              <FaPhoneAlt className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-3" />
-              <input
-                type="tel"
-                required
-                placeholder={t.auth.phonePlaceholder}
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-[#007bff]"
-              />
-            </div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              Username
+            </label>
+            <input
+              type="text"
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-[#0066ff] focus:ring-1 focus:ring-[#0066ff] text-sm text-slate-800 transition-colors bg-white"
+            />
           </div>
 
           <div>
-            <label className="block text-slate-700 font-bold mb-1">{t.auth.passwordLabel} *</label>
-            <div className="relative">
-              <FaLock className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-3" />
-              <input
-                type="password"
-                required
-                placeholder={t.auth.passwordPlaceholder}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-[#007bff]"
-              />
-            </div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              Password
+            </label>
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-[#0066ff] focus:ring-1 focus:ring-[#0066ff] text-sm text-slate-800 transition-colors bg-white"
+            />
           </div>
 
           {mode === 'signup' && (
             <div>
-              <label className="block text-slate-700 font-bold mb-1">{t.auth.batchLabel} *</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                Target Batch
+              </label>
               <select
                 value={batch}
                 onChange={(e) => setBatch(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-[#007bff] bg-white"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-[#0066ff] focus:ring-1 focus:ring-[#0066ff] text-sm text-slate-800 transition-colors bg-white"
               >
                 <option value="৪৭তম বিসিএস বুলেট ব্যাচ">{lang === 'bn' ? '৪৭তম বিসিএস বুলেট ব্যাচ' : '47th BCS Bullet Batch'}</option>
                 <option value="প্রাইমারি স্পেশাল গোল্ড ব্যাচ">{lang === 'bn' ? 'প্রাইমারি স্পেশাল গোল্ড ব্যাচ' : 'Primary Special Gold Batch'}</option>
@@ -175,34 +159,37 @@ export default function AuthModal({
             </div>
           )}
 
+          {/* Blue Button */}
           <button
             type="submit"
-            className="w-full py-2.5 bg-gradient-to-r from-[#007bff] to-[#0056b3] hover:from-[#0056b3] hover:to-[#004085] text-white font-bold rounded-xl shadow-md transition-all text-sm mt-2"
+            className="w-full py-2.5 px-4 bg-[#0066ff] hover:bg-[#0055d4] active:bg-[#0047b8] text-white font-medium text-sm rounded-lg transition-colors shadow-xs flex items-center justify-center cursor-pointer mt-6"
           >
-            {mode === 'login' ? t.auth.submitLogin : t.auth.submitSignup}
+            {mode === 'login' ? 'Login' : 'Sign up'}
           </button>
         </form>
 
-        {/* Switch Mode */}
-        <div className="text-center mt-5 text-xs text-slate-600">
+        {/* Switch Mode: Don't have an account? Sign up */}
+        <div className="text-center mt-6 text-sm text-slate-600">
           {mode === 'login' ? (
             <p>
+              <span>Don&apos;t have an account? </span>
               <button
                 type="button"
                 onClick={() => setMode('signup')}
-                className="text-[#007bff] font-bold hover:underline"
+                className="text-[#0066ff] font-medium hover:underline cursor-pointer"
               >
-                {t.auth.noAccount}
+                Sign up
               </button>
             </p>
           ) : (
             <p>
+              <span>Already have an account? </span>
               <button
                 type="button"
                 onClick={() => setMode('login')}
-                className="text-[#007bff] font-bold hover:underline"
+                className="text-[#0066ff] font-medium hover:underline cursor-pointer"
               >
-                {t.auth.hasAccount}
+                Login
               </button>
             </p>
           )}

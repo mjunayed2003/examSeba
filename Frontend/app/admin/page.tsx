@@ -106,7 +106,7 @@ export default function AdminPage() {
   const [examCategoryFilter, setExamCategoryFilter] = useState('all');
   const [isAddExamOpen, setIsAddExamOpen] = useState(false);
   const [newExamTitle, setNewExamTitle] = useState('');
-  const [newExamCategory, setNewExamCategory] = useState('বিসিএস প্রিলিমিনারি');
+  const [newExamCategory, setNewExamCategory] = useState<'bcs' | 'primary' | 'ntrca' | 'bank' | 'general' | 'subject'>('bcs');
   const [newExamQuestions, setNewExamQuestions] = useState('100');
   const [newExamDuration, setNewExamDuration] = useState('60');
   const [newExamPassMark, setNewExamPassMark] = useState('50');
@@ -302,17 +302,18 @@ export default function AdminPage() {
     e.preventDefault();
     if (!newExamTitle.trim()) return;
 
+    const totalQ = parseInt(newExamQuestions) || 100;
     const newExam: Exam = {
       id: `exam-${Date.now()}`,
       title: newExamTitle.trim(),
       category: newExamCategory,
-      totalQuestions: parseInt(newExamQuestions) || 100,
+      totalQuestions: totalQ,
+      totalMarks: totalQ,
       durationMinutes: parseInt(newExamDuration) || 60,
-      passMark: parseInt(newExamPassMark) || 50,
-      negativeMarkPerQuestion: 0.25,
-      examineeCount: 0,
-      badge: 'নতুন এক্সাম',
-      date: isBn ? 'আজ প্রকাশিত' : 'Just published',
+      negativeMark: 0.25,
+      passMarks: parseInt(newExamPassMark) || 50,
+      batchName: newExamCategory === 'bcs' ? '৪৭তম বিসিএস বুলেট ব্যাচ' : 'বিশেষ প্রস্তুতি ব্যাচ',
+      examDate: isBn ? 'আজ প্রকাশিত' : 'Just published',
       isLive: true,
       questions: SAMPLE_EXAMS[0].questions,
     };
@@ -971,7 +972,7 @@ export default function AdminPage() {
                           </td>
                           <td className="py-3.5 px-4 font-semibold">{exam.totalQuestions} টি</td>
                           <td className="py-3.5 px-4 font-semibold">{exam.durationMinutes} মিনিট</td>
-                          <td className="py-3.5 px-4 font-semibold">{exam.passMark}</td>
+                          <td className="py-3.5 px-4 font-semibold">{exam.passMarks}</td>
                           <td className="py-3.5 px-4">
                             <span
                               className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
@@ -1032,14 +1033,14 @@ export default function AdminPage() {
                           </label>
                           <select
                             value={newExamCategory}
-                            onChange={(e) => setNewExamCategory(e.target.value)}
+                            onChange={(e) => setNewExamCategory(e.target.value as 'bcs' | 'primary' | 'ntrca' | 'bank' | 'general' | 'subject')}
                             className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs"
                           >
-                            <option value="বিসিএস প্রিলিমিনারি">বিসিএস প্রিলিমিনারি</option>
-                            <option value="প্রাইমারি শিক্ষক নিয়োগ">প্রাইমারি শিক্ষক নিয়োগ</option>
-                            <option value="১৯তম NTRCA নিবন্ধন">১৯তম NTRCA নিবন্ধন</option>
-                            <option value="কম্বাইন্ড ব্যাংক অফিসার">কম্বাইন্ড ব্যাংক অফিসার</option>
-                            <option value="ডেইলি ফ্রি টেস্ট">ডেইলি ফ্রি টেস্ট</option>
+                            <option value="bcs">{isBn ? '৪৭তম বিসিএস (BCS)' : '47th BCS'}</option>
+                            <option value="primary">{isBn ? 'প্রাইমারি শিক্ষক নিয়োগ' : 'Primary Teacher'}</option>
+                            <option value="ntrca">{isBn ? '১৯তম NTRCA নিবন্ধন' : '19th NTRCA'}</option>
+                            <option value="bank">{isBn ? 'কম্বাইন্ড ব্যাংক অফিসার' : 'Bank Officer'}</option>
+                            <option value="general">{isBn ? 'সাধারণ সরকারি চাকরি' : 'General Govt'}</option>
                           </select>
                         </div>
 
