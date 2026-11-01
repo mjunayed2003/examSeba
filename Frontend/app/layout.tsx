@@ -1,21 +1,6 @@
 import type { Metadata } from "next";
-import { Hind_Siliguri, Poppins } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "./context/LanguageContext";
-
-const hindSiliguri = Hind_Siliguri({
-  subsets: ["bengali", "latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-hind-siliguri",
-  display: "swap",
-});
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-poppins",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "এক্সাম সেবা | জব কুইজ টেস্ট - অনলাইন পরীক্ষা পোর্টাল",
@@ -28,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="bn" className={`scroll-smooth ${hindSiliguri.variable} ${poppins.variable}`}>
-      <body className="antialiased min-h-screen flex flex-col bg-[#f8f9fa] text-slate-800">
+    <html lang="bn" className="scroll-smooth">
+      <body className="antialiased min-h-screen flex flex-col bg-[#f8f9fa] text-slate-800 font-sans">
         <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
