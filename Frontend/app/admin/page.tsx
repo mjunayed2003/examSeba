@@ -31,11 +31,15 @@ import {
   FaCheck,
   FaCopy,
   FaKey,
+  FaLayerGroup,
+  FaPaste,
+  FaMagic,
+  FaListOl,
 } from 'react-icons/fa';
 import { HiBars3 } from 'react-icons/hi2';
 import ExamSebaLogo from '../components/ExamSebaLogo';
 import { useLanguage } from '../context/LanguageContext';
-import { SAMPLE_EXAMS, Exam } from '../data/examData';
+import { SAMPLE_EXAMS, Exam, Question } from '../data/examData';
 
 // Data Interfaces
 export interface AdminQuestion {
@@ -46,6 +50,19 @@ export interface AdminQuestion {
   correctAnswer: number;
   explanation: string;
   difficulty?: 'easy' | 'medium' | 'hard';
+  setId?: string;
+  setName?: string;
+}
+
+export interface QuestionSet {
+  id: string;
+  title: string;
+  subject: string;
+  category: string;
+  totalQuestions: number;
+  createdAt: string;
+  description?: string;
+  questions: AdminQuestion[];
 }
 
 export interface AdminStudent {
@@ -120,8 +137,256 @@ function getServerAdminSnapshot(): string | null {
   return null;
 }
 
+// Pre-defined 10 Authentic Questions Sample Text
+const SAMPLE_10_QUESTIONS_TEXT = `১. 'কবর' নাটকটির রচয়িতা কে?
+ক) মুনীর চৌধুরী
+খ) শামসুর রাহমান
+গ) জসীম উদ্দীন
+ঘ) কাজী নজরুল ইসলাম
+উত্তর: ক
+ব্যাখ্যা: মুনীর চৌধুরী ১৯৫২ সালের ভাষা আন্দোলনের পটভূমিতে ঢাকা কেন্দ্রীয় কারাগারে এই নাটক রচনা করেন।
+
+২. 'পদ্মা নদীর মাঝি' উপন্যাসের রচয়িতা কে?
+ক) মানিক বন্দ্যোপাধ্যায়
+খ) শরৎচন্দ্র চট্টোপাধ্যায়
+গ) তারাশঙ্কর বন্দ্যোপাধ্যায়
+ঘ) বিভূতিভূষণ বন্দ্যোপাধ্যায়
+উত্তর: ক
+ব্যাখ্যা: মানিক বন্দ্যোপাধ্যায়ের বিখ্যাত সামাজিক উপন্যাস 'পদ্মা নদীর মাঝি' ১৯৩৬ সালে প্রকাশিত হয়।
+
+৩. 'সূর্য' শব্দের সমার্থক শব্দ কোনটি?
+ক) সুধাকর
+খ) শশাঙ্ক
+গ) অর্ক
+ঘ) বিধু
+উত্তর: গ
+ব্যাখ্যা: অর্ক, মার্তণ্ড, রবি, সবিতা সূর্য শব্দের সমার্থক। বিধু ও শশাঙ্ক চন্দ্রের সমার্থক শব্দ।
+
+৪. 'নষ্ট হওয়া যার স্বভাব' এক কথায় কী হবে?
+ক) ক্ষণস্থায়ী
+খ) নশ্বর
+গ) অবিনশ্বর
+ঘ) চঞ্চল
+উত্তর: খ
+ব্যাখ্যা: যা সহজে নষ্ট হয়ে যায় তাকে নশ্বর বা বিনশ্বর বলে।
+
+৫. Which one is the correct spelling?
+A) Lieutenant
+B) Leutenant
+C) Lieutennant
+D) Lietenant
+Ans: A
+Explanation: Correct spelling is Lieutenant (Lie-u-ten-ant: মিথ্যা-তুমি-দশ-পিঁপড়া)।
+
+৬. What is the noun form of 'Brief'?
+A) Briefly
+B) Brevity
+C) Briefness
+D) Bravery
+Ans: B
+Explanation: The noun form of 'brief' is 'brevity'.
+
+৭. একটি সংখ্যার ৩ গুণের সাথে দ্বিগুণ যোগ করলে ৯০ হয়। সংখ্যাটি কত?
+ক) ১৫
+খ) ১৮
+গ) ২০
+ঘ) ১২
+উত্তর: খ
+ব্যাখ্যা: ধরি সংখ্যাটি x। ৩x + ২x = ৯০ => ৫x = ৯০ => x = ৯০/৫ = ১৮।
+
+৮. পিতা ও পুত্রের বয়সের অনুপাত ৭:২। পিতার বয়স ৪২ বছর হলে পুত্রের বয়স কত?
+ক) ১০ বছর
+খ) ১২ বছর
+গ) ১৪ বছর
+ঘ) ১৬ বছর
+উত্তর: খ
+ব্যাখ্যা: পুত্রের বয়স = (৪২ * ২) / ৭ = ১২ বছর।
+
+৯. মুক্তিযুদ্ধকালীন সময়ে বাংলাদেশকে কয়টি সেক্টরে বিভক্ত করা হয়েছিল?
+ক) ৭টি
+খ) ৮টি
+গ) ১১টি
+ঘ) ৬৪টি
+উত্তর: গ
+ব্যাখ্যা: ১৯৭১ সালের মহান মুক্তিযুদ্ধে বাংলাদেশকে ১১টি সামরিক সেক্টর ও ৬৪টি সাব-সেক্টরে ভাগ করা হয়েছিল।
+
+১০. জাতিসংঘের টেকসই উন্নয়ন লক্ষ্যমাত্রা (SDG) এর মোট গোল কয়টি?
+ক) ১৭টি
+খ) ১৫টি
+গ) ১৯টি
+ঘ) ২১টি
+উত্তর: ক
+ব্যাখ্যা: SDG এর মোট ১৭টি গোল এবং ১৬৯টি সুনির্দিষ্ট টার্গেট রয়েছে।`;
+
+// Pre-defined 20 Authentic Questions Sample Text
+const SAMPLE_20_QUESTIONS_TEXT = `${SAMPLE_10_QUESTIONS_TEXT}
+
+১১. রক্ত জমাট বাঁধতে সরাসরি সাহায্য করে কোন ভিটামিন?
+ক) ভিটামিন A
+খ) ভিটামিন C
+গ) ভিটামিন D
+ঘ) ভিটামিন K
+উত্তর: ঘ
+ব্যাখ্যা: ভিটামিন K যকৃতে প্রোথ্রম্বিন সংশ্লেষে সাহায্য করে যা রক্ত তঞ্চনে অপরিহার্য ভূমিকা রাখে।
+
+১২. মানবদেহের সবচেয়ে বড় গ্রন্থি (Largest Gland) কোনটি?
+ক) যকৃত (Liver)
+খ) অগ্ন্যাশয়
+গ) থাইরয়েড
+ঘ) পিটুইটারি
+উত্তর: ক
+ব্যাখ্যা: মানবদেহের সবচেয়ে বড় বহিঃক্ষরা গ্রন্থি হলো যকৃত যার ওজন প্রায় ১.৫ কেজি।
+
+১৩. কম্পিউটারের প্রধান বা মূল মেমোরি কোনটি?
+ক) RAM ও ROM
+খ) হার্ডডিস্ক
+গ) পেনড্রাইভ
+ঘ) সিডি রম
+উত্তর: ক
+ব্যাখ্যা: RAM এবং ROM হলো কম্পিউটারের অভ্যন্তরীণ প্রাইমারি মেমোরি।
+
+১৪. WWW এর পূর্ণরূপ কোনটি?
+ক) World Wide Web
+খ) World Whole Web
+গ) Wide World Web
+ঘ) World Web Wide
+উত্তর: ক
+ব্যাখ্যা: ব্রিটিশ বিজ্ঞানী টিম বার্নার্স-লি ১৯৮৯ সালে World Wide Web (WWW) উদ্ভাবন করেন।
+
+১৫. গণপ্রজাতন্ত্রী বাংলাদেশের সংবিধান কোন তারিখে গণপরিষদে গৃহীত হয়?
+ক) ৪ নভেম্বর ১৯৭২
+খ) ১৬ ডিসেম্বর ১৯৭২
+গ) ২৬ মার্চ ১৯৭২
+ঘ) ১৭ এপ্রিল ১৯৭২
+উত্তর: ক
+ব্যাখ্যা: ১৯৭২ সালের ৪ নভেম্বর সংবিধান গৃহীত হয় এবং ১৬ ডিসেম্বর থেকে তা কার্যকর হয়।
+
+১৬. বাংলাদেশের জাতীয় সংসদে নারীদের জন্য সংরক্ষিত আসন সংখ্যা কতটি?
+ক) ৩০টি
+খ) ৪৫টি
+গ) ৫০টি
+ঘ) ৬০টি
+উত্তর: গ
+ব্যাখ্যা: বাংলাদেশের সংবিধানে নারীদের জন্য সংরক্ষিত ৫০টি আসন নির্ধারিত রয়েছে।
+
+১৭. ১৯৭১ সালের প্রথম স্বাধীন বাংলাদেশ সরকারের প্রধানমন্ত্রী কে ছিলেন?
+ক) তাজউদ্দীন আহমদ
+খ) সৈয়দ নজরুল ইসলাম
+গ) ক্যাপ্টেন এম মনসুর আলী
+ঘ) খন্দকার মোশতাক আহমদ
+উত্তর: ক
+ব্যাখ্যা: তাজউদ্দীন আহমদ মুজিবনগর সরকারের প্রধানমন্ত্রী ছিলেন।
+
+১৮. হৃদরোগের অন্যতম প্রধান ঝুঁকি বৃদ্ধি করে রক্তে কোনটি বৃদ্ধি পেলে?
+ক) কোলেস্টেরল
+খ) হিমোগ্লোবিন
+গ) লোহিত কণিকা
+ঘ) ক্যালসিয়াম
+উত্তর: ক
+ব্যাখ্যা: রক্তে ক্ষতিকর এলডিএল কোলেস্টেরল বৃদ্ধি পেলে রক্তনালীতে ব্লকেজ সৃষ্টি হয়ে হার্ট অ্যাটাকের ঝুঁকি বাড়ে।
+
+১৯. কোন প্রতিবেশী দেশটির সাথে বাংলাদেশের আন্তর্জাতিক স্থল সীমান্ত রয়েছে?
+ক) ভারত ও মিয়ানমার
+খ) ভারত ও নেপাল
+গ) মিয়ানমার ও ভুটান
+ঘ) শুধু ভারত
+উত্তর: ক
+ব্যাখ্যা: বাংলাদেশের সাথে দুটি দেশের সীমান্ত রয়েছে: ভারত এবং মিয়ানমার।
+
+২০. প্রতি বছর বিশ্ব পরিবেশ দিবস কত তারিখে উদযাপিত হয়?
+ক) ৫ জুন
+খ) ৭ এপ্রিল
+গ) ২২ এপ্রিল
+ঘ) ১ মে
+উত্তর: ক
+ব্যাখ্যা: ১৯৭৪ সাল থেকে প্রতি বছর ৫ জুন বিশ্ব পরিবেশ দিবস হিসেবে বিশ্বজুড়ে পালিত হয়।`;
+
+// Helper: Parse raw text into questions array
+function parseQuestionsFromRawText(
+  rawText: string,
+  defaultSubject: string,
+  defaultDifficulty: 'easy' | 'medium' | 'hard'
+): AdminQuestion[] {
+  if (!rawText.trim()) return [];
+
+  const lines = rawText.split('\n');
+  const blocks: string[][] = [];
+  let currentBlock: string[] = [];
+
+  const qNumberRegex = /^([০-৯0-9]+)[\.\)]|^\(([০-৯0-9]+)\)/;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    if (qNumberRegex.test(trimmed)) {
+      if (currentBlock.length > 0) {
+        blocks.push(currentBlock);
+      }
+      currentBlock = [trimmed];
+    } else {
+      if (currentBlock.length > 0) {
+        currentBlock.push(trimmed);
+      } else {
+        currentBlock = [trimmed];
+      }
+    }
+  }
+  if (currentBlock.length > 0) {
+    blocks.push(currentBlock);
+  }
+
+  const results: AdminQuestion[] = [];
+
+  blocks.forEach((block, idx) => {
+    if (block.length === 0) return;
+
+    const rawQ = block[0].replace(/^([০-৯0-9]+)[\.\)\s]+|^\(([০-৯0-9]+)\)\s*/, '').trim();
+    const options: string[] = [];
+    let correct = 0;
+    let explanation = '';
+
+    for (let i = 1; i < block.length; i++) {
+      const l = block[i];
+      const ansMatch = l.match(/^(?:উত্তর|ans|answer)[\s:：]+([কখগঘabcdABCD1-4])/i);
+      const expMatch = l.match(/^(?:ব্যাখ্যা|explanation|note)[\s:：]+(.*)/i);
+      const optMatch = l.match(/^([কখগঘabcdABCD])[\.\)\s]+(.*)/i) || l.match(/^\(([কখগঘabcdABCD])\)\s*(.*)/i);
+
+      if (ansMatch) {
+        const val = ansMatch[1].toLowerCase();
+        if (val === 'ক' || val === 'a' || val === '1') correct = 0;
+        else if (val === 'খ' || val === 'b' || val === '2') correct = 1;
+        else if (val === 'গ' || val === 'c' || val === '3') correct = 2;
+        else if (val === 'ঘ' || val === 'd' || val === '4') correct = 3;
+      } else if (expMatch) {
+        explanation = expMatch[1].trim();
+      } else if (optMatch) {
+        options.push(optMatch[2].trim());
+      }
+    }
+
+    while (options.length < 4) {
+      options.push(`বিকল্প ${options.length + 1}`);
+    }
+
+    if (rawQ) {
+      results.push({
+        id: `q-bulk-${Date.now()}-${idx + 1}`,
+        subject: defaultSubject,
+        question: rawQ,
+        options: options.slice(0, 4),
+        correctAnswer: correct,
+        explanation: explanation || 'সঠিক উত্তর নির্বাচন করা হয়েছে।',
+        difficulty: defaultDifficulty,
+      });
+    }
+  });
+
+  return results;
+}
+
 export default function AdminPage() {
-  const { lang, toggleLang, t } = useLanguage();
+  const { lang, toggleLang } = useLanguage();
   const isBn = lang === 'bn';
 
   // Admin Auth State
@@ -163,63 +428,17 @@ export default function AdminPage() {
   const [newExamPassMark, setNewExamPassMark] = useState('14');
   const [newExamNegativeMark, setNewExamNegativeMark] = useState('0.25');
 
+  // Initial Sample Questions
+  const initial10Questions = useMemo(() => {
+    return parseQuestionsFromRawText(SAMPLE_10_QUESTIONS_TEXT, 'বিসিএস ও সাধারণ প্রস্তুতি', 'medium');
+  }, []);
+
+  const initial20Questions = useMemo(() => {
+    return parseQuestionsFromRawText(SAMPLE_20_QUESTIONS_TEXT, 'প্রাইমারি ও মডেল টেস্ট', 'medium');
+  }, []);
+
   // State: Questions
-  const [questionsList, setQuestionsList] = useState<AdminQuestion[]>([
-    {
-      id: 'q-1',
-      subject: 'বাংলা সাহিত্য ও ব্যাকরণ',
-      question: "'কবর' নাটকটির রচয়িতা কে?",
-      options: ['মুনীর চৌধুরী', 'শামসুর রাহমান', 'জসীম উদ্দীন', 'কাজী নজরুল ইসলাম'],
-      correctAnswer: 0,
-      explanation: 'মুনীর চৌধুরী ১৯৫২ সালের ভাষা আন্দোলনের পটভূমিতে ঢাকা কেন্দ্রীয় কারাগারে এই নাটকটি রচনা করেন।',
-      difficulty: 'easy',
-    },
-    {
-      id: 'q-2',
-      subject: 'ইংরেজি ব্যাকরণ ও সাহিত্য',
-      question: 'Identify the word that remains unchanged in its plural form:',
-      options: ['Deer', 'Ox', 'Foot', 'Mouse'],
-      correctAnswer: 0,
-      explanation: "'Deer', 'Sheep', 'Species' ইত্যাদি শব্দের সিঙ্গুলার ও প্লুরাল উভয় রূপ একই থাকে।",
-      difficulty: 'medium',
-    },
-    {
-      id: 'q-3',
-      subject: 'গণিত ও মানসিক দক্ষতা',
-      question: 'যদি x + y = 7 এবং xy = 10 হয়, তবে x² + y² এর মান কত?',
-      options: ['29', '39', '49', '59'],
-      correctAnswer: 0,
-      explanation: 'x² + y² = (x + y)² - 2xy = (7)² - 2(10) = 49 - 20 = 29।',
-      difficulty: 'medium',
-    },
-    {
-      id: 'q-4',
-      subject: 'বাংলাদেশ বিষয়াবলী',
-      question: 'বাংলাদেশের সংবিধান কত তারিখে গণপরিষদে গৃহীত হয়?',
-      options: ['৪ নভেম্বর ১৯৭২', '১৬ ডিসেম্বর ১৯৭২', '২৬ মার্চ ১৯৭২', '১৭ এপ্রিল ১৯৭২'],
-      correctAnswer: 0,
-      explanation: '১৯৭২ সালের ৪ নভেম্বর গণপরিষদে বাংলাদেশের সংবিধান গৃহীত হয় এবং ১৬ ডিসেম্বর থেকে কার্যকর হয়।',
-      difficulty: 'easy',
-    },
-    {
-      id: 'q-5',
-      subject: 'আন্তর্জাতিক বিষয়াবলী',
-      question: 'জাতিসংঘের টেকসই উন্নয়ন লক্ষ্যমাত্রা (SDG) এর মোট গোল বা লক্ষ্য কয়টি?',
-      options: ['১৭টি', '১৫টি', '১৯টি', '২১টি'],
-      correctAnswer: 0,
-      explanation: 'SDG এর মোট ১৭টি মূল লক্ষ্যমাত্রা এবং ১৬৯টি সুনির্দিষ্ট টার্গেট রয়েছে।',
-      difficulty: 'easy',
-    },
-    {
-      id: 'q-6',
-      subject: 'সাধারণ বিজ্ঞান ও আইসিটি',
-      question: 'কম্পিউটারের প্রধান মেমোরি কোনটি?',
-      options: ['RAM ও ROM', 'হার্ডডিস্ক', 'পেনড্রাইভ', 'সিডি রম'],
-      correctAnswer: 0,
-      explanation: 'RAM এবং ROM হলো কম্পিউটারের প্রাথমিক বা প্রাইমারি মেমোরি।',
-      difficulty: 'easy',
-    },
-  ]);
+  const [questionsList, setQuestionsList] = useState<AdminQuestion[]>(initial10Questions);
   const [questionSearch, setQuestionSearch] = useState('');
   const [questionSubjectFilter, setQuestionSubjectFilter] = useState('all');
   const [questionDifficultyFilter, setQuestionDifficultyFilter] = useState('all');
@@ -234,6 +453,58 @@ export default function AdminPage() {
   const [newQOp4, setNewQOp4] = useState('');
   const [newQCorrect, setNewQCorrect] = useState(0);
   const [newQExplanation, setNewQExplanation] = useState('');
+
+  // State: Question Sets (সেট আকারে প্রশ্ন ব্যবস্থাপনা)
+  const [questionViewMode, setQuestionViewMode] = useState<'individual' | 'sets'>('sets');
+  const [questionSetsList, setQuestionSetsList] = useState<QuestionSet[]>([
+    {
+      id: 'set-bcs-10',
+      title: '৪৭তম বিসিএস ১০টি বাংলা ও সাধারণ মেগা প্রশ্ন সেট',
+      subject: 'বাংলা ও বাংলাদেশ বিষয়াবলী',
+      category: 'বিসিএস',
+      totalQuestions: 10,
+      createdAt: 'আজ প্রকাশিত',
+      description: 'বিসিএস প্রিলিমিনারি প্রস্তুতির জন্য বাছাইকৃত ১০টি প্রমিত নৈর্ব্যক্তিক প্রশ্ন।',
+      questions: initial10Questions,
+    },
+    {
+      id: 'set-pri-20',
+      title: 'প্রাইমারি শিক্ষক নিয়োগ ২০টি পূর্ণাঙ্গ মডেল টেস্ট প্রশ্ন সেট',
+      subject: 'সার্বিক মডেল টেস্ট',
+      category: 'প্রাইমারি',
+      totalQuestions: 20,
+      createdAt: 'আজ প্রকাশিত',
+      description: 'বাংলা, ইংরেজি, গণিত ও সাধারণ জ্ঞানের সমন্বয়ে প্রস্তুত ২০টি প্রশ্ন সেট।',
+      questions: initial20Questions,
+    },
+  ]);
+  const [selectedSetToView, setSelectedSetToView] = useState<QuestionSet | null>(null);
+  const [isAttachExamModalOpen, setIsAttachExamModalOpen] = useState(false);
+  const [setTargetForExam, setSetTargetForExam] = useState<QuestionSet | null>(null);
+  const [targetExamIdForAttach, setTargetExamIdForAttach] = useState('');
+
+  // State: Bulk Question Add System (একসাথে ১০/২০টি প্রশ্ন অ্যাড)
+  const [isBulkAddOpen, setIsBulkAddOpen] = useState(false);
+  const [bulkModeTab, setBulkModeTab] = useState<'text-parser' | 'builder' | 'presets'>('text-parser');
+  const [bulkSetTitle, setBulkSetTitle] = useState('৪৭তম বিসিএস মেগা প্রশ্ন সেট - ০১');
+  const [bulkSetSubject, setBulkSetSubject] = useState('বাংলা সাহিত্য ও ব্যাকরণ');
+  const [bulkSetCategory, setBulkSetCategory] = useState('বিসিএস');
+  const [bulkDefaultDifficulty, setBulkDefaultDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
+
+  // Text Parser State
+  const [bulkRawText, setBulkRawText] = useState(SAMPLE_10_QUESTIONS_TEXT);
+  const [parsedQuestions, setParsedQuestions] = useState<AdminQuestion[]>(initial10Questions);
+
+  // Multi-Form Builder State
+  interface BuilderDraftQuestion {
+    id: string;
+    question: string;
+    options: [string, string, string, string];
+    correctAnswer: number;
+    explanation: string;
+    difficulty: 'easy' | 'medium' | 'hard';
+  }
+  const [builderQuestions, setBuilderQuestions] = useState<BuilderDraftQuestion[]>([]);
 
   // State: Students & Users Management
   const [studentsList, setStudentsList] = useState<AdminStudent[]>([
@@ -540,7 +811,7 @@ export default function AdminPage() {
         )
       );
       setEditingExam(null);
-      showToast(isBn ? 'পরীক্ষার তথ্য আপডেট করা হয়েছে!' : 'Exam updated successfully!');
+      showToast('পরীক্ষার তথ্য সফলভাবে আপডেট হয়েছে!');
     } else {
       const newExam: Exam = {
         id: `exam-${Date.now()}`,
@@ -552,14 +823,14 @@ export default function AdminPage() {
         negativeMark: negMark,
         passMarks,
         batchName: newExamBatch,
-        examDate: isBn ? 'আজকে লাইভ চলছে' : 'Live Now',
+        examDate: 'আজকে লাইভ চলছে',
         isLive: true,
         isFree: true,
         questions: SAMPLE_EXAMS[0].questions,
       };
 
       setExamsList([newExam, ...examsList]);
-      showToast(isBn ? 'নতুন পরীক্ষা সফলভাবে তৈরি হয়েছে!' : 'New exam created successfully!');
+      showToast('নতুন পরীক্ষা সফলভাবে তৈরি হয়েছে!');
     }
 
     setIsAddExamOpen(false);
@@ -580,7 +851,7 @@ export default function AdminPage() {
 
   const handleDeleteExam = (id: string) => {
     setExamsList(examsList.filter((e) => e.id !== id));
-    showToast(isBn ? 'পরীক্ষাটি মুছে ফেলা হয়েছে' : 'Exam deleted successfully');
+    showToast('পরীক্ষাটি মুছে ফেলা হয়েছে');
   };
 
   const handleDuplicateExam = (exam: Exam) => {
@@ -590,17 +861,17 @@ export default function AdminPage() {
       title: `${exam.title} (কপি)`,
     };
     setExamsList([duplicated, ...examsList]);
-    showToast(isBn ? 'পরীক্ষাটি সফলভাবে ডুপ্লিকেট করা হয়েছে' : 'Exam duplicated successfully');
+    showToast('পরীক্ষাটি সফলভাবে ডুপ্লিকেট করা হয়েছে');
   };
 
   const handleToggleExamLive = (id: string) => {
     setExamsList(
       examsList.map((e) => (e.id === id ? { ...e, isLive: !e.isLive } : e))
     );
-    showToast(isBn ? 'পরীক্ষার লাইভ স্ট্যাটাস পরিবর্তন হয়েছে' : 'Exam live status toggled');
+    showToast('পরীক্ষার লাইভ স্ট্যাটাস পরিবর্তন হয়েছে');
   };
 
-  // Question Actions
+  // Question Management Actions
   const handleCreateOrUpdateQuestion = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newQText.trim() || !newQOp1.trim() || !newQOp2.trim()) return;
@@ -622,7 +893,7 @@ export default function AdminPage() {
         )
       );
       setEditingQuestion(null);
-      showToast(isBn ? 'প্রশ্নটি আপডেট করা হয়েছে!' : 'Question updated!');
+      showToast('প্রশ্নটি সফলভাবে আপডেট হয়েছে!');
     } else {
       const newQ: AdminQuestion = {
         id: `q-${Date.now()}`,
@@ -631,10 +902,10 @@ export default function AdminPage() {
         question: newQText.trim(),
         options: [newQOp1.trim(), newQOp2.trim(), newQOp3.trim() || 'অপশন ৩', newQOp4.trim() || 'অপশন ৪'],
         correctAnswer: newQCorrect,
-        explanation: newQExplanation.trim() || (isBn ? 'সঠিক উত্তর নির্বাচন করা হয়েছে।' : 'Correct answer marked.'),
+        explanation: newQExplanation.trim() || 'সঠিক উত্তর নির্বাচন করা হয়েছে।',
       };
       setQuestionsList([newQ, ...questionsList]);
-      showToast(isBn ? 'প্রশ্নব্যাংকে নতুন প্রশ্ন যুক্ত হয়েছে!' : 'Question added to question bank!');
+      showToast('প্রশ্নব্যাংকে নতুন প্রশ্ন যুক্ত হয়েছে!');
     }
 
     setIsAddQuestionOpen(false);
@@ -662,32 +933,217 @@ export default function AdminPage() {
 
   const handleDeleteQuestion = (id: string) => {
     setQuestionsList(questionsList.filter((q) => q.id !== id));
-    showToast(isBn ? 'প্রশ্নটি মুছে ফেলা হয়েছে' : 'Question removed');
+    showToast('প্রশ্নটি মুছে ফেলা হয়েছে');
   };
 
-  const handleImportSampleQuestions = () => {
-    const sampleBatch: AdminQuestion[] = [
-      {
-        id: `q-sample-${Date.now()}-1`,
-        subject: 'বাংলাদেশ বিষয়াবলী',
-        question: 'মুজিবনগর সরকার কোন তারিখে শপথ গ্রহণ করে?',
-        options: ['১৭ এপ্রিল ১৯৭১', '১০ এপ্রিল ১৯৭১', '২৬ মার্চ ১৯৭১', '৭ মার্চ ১৯৭১'],
+  // =========================================================
+  // BULK QUESTION ADD & QUESTION SET FUNCTIONS
+  // =========================================================
+
+  // Parse bulk text in real-time
+  const handleParseBulkRawText = () => {
+    const parsed = parseQuestionsFromRawText(bulkRawText, bulkSetSubject, bulkDefaultDifficulty);
+    setParsedQuestions(parsed);
+    if (parsed.length === 0) {
+      showToast('কোনো বৈধ প্রশ্ন পাওয়া যায়নি! অনুগ্রহ করে ফরম্যাট চেক করুন।');
+    } else {
+      showToast(`অভিনন্দন! ${parsed.length}টি প্রশ্ন সফলভাবে পার্স হয়েছে।`);
+    }
+  };
+
+  // Save parsed questions as a Question Set and add to Question Bank
+  const handleSaveBulkQuestionsSet = () => {
+    if (parsedQuestions.length === 0) {
+      showToast('সংরক্ষণ করার মতো কোনো প্রশ্ন নেই!');
+      return;
+    }
+
+    const setId = `set-${Date.now()}`;
+    const taggedQuestions = parsedQuestions.map((q, idx) => ({
+      ...q,
+      id: `${setId}-q-${idx + 1}`,
+      setId,
+      setName: bulkSetTitle.trim(),
+      subject: bulkSetSubject,
+    }));
+
+    const newSet: QuestionSet = {
+      id: setId,
+      title: bulkSetTitle.trim() || `প্রশ্ন সেট (${taggedQuestions.length}টি প্রশ্ন)`,
+      subject: bulkSetSubject,
+      category: bulkSetCategory,
+      totalQuestions: taggedQuestions.length,
+      createdAt: 'আজ প্রকাশিত',
+      description: `${bulkSetSubject} বিষয়ের উপর প্রস্তুতকৃত ${taggedQuestions.length}টি প্রশ্নের প্রমিত সেট।`,
+      questions: taggedQuestions,
+    };
+
+    setQuestionSetsList([newSet, ...questionSetsList]);
+    setQuestionsList([...taggedQuestions, ...questionsList]);
+    setIsBulkAddOpen(false);
+    showToast(`দারুণ! "${newSet.title}" এ ${taggedQuestions.length}টি প্রশ্ন সফলভাবে যোগ হয়েছে!`);
+  };
+
+  // Multi-Form Builder: Add rows
+  const handleAddBuilderRows = (count: number) => {
+    const newRows: BuilderDraftQuestion[] = [];
+    const startIndex = builderQuestions.length + 1;
+    for (let i = 0; i < count; i++) {
+      newRows.push({
+        id: `builder-${Date.now()}-${startIndex + i}`,
+        question: '',
+        options: ['', '', '', ''],
         correctAnswer: 0,
-        explanation: '১৯৭১ সালের ১৭ এপ্রিল তৎকালীন মেহেরপুরের বৈদ্যনাথতলায় (বর্তমান মুজিবনগর) প্রথম স্বাধীন বাংলাদেশ সরকার শপথ গ্রহণ করে।',
-        difficulty: 'easy',
-      },
-      {
-        id: `q-sample-${Date.now()}-2`,
-        subject: 'গণিত ও মানসিক দক্ষতা',
-        question: 'কোন ত্রিভুজের বাহুগুলোর অনুপাত ৫:১২:১৩ হলে এটি কোন ধরনের ত্রিভুজ?',
-        options: ['সমকোণী ত্রিভুজ', 'সমবাহু ত্রিভুজ', 'স্থূলকোণী ত্রিভুজ', 'সমদ্বিবাহু ত্রিভুজ'],
-        correctAnswer: 0,
-        explanation: 'পীথাগোরাসের উপপাদ্য অনুযায়ী ৫² + ১২² = ২৫ + ১৪৪ = ১৬৯ = ১৩²। সুতরাং এটি সমকোণী ত্রিভুজ।',
-        difficulty: 'medium',
-      },
-    ];
-    setQuestionsList([...sampleBatch, ...questionsList]);
-    showToast(isBn ? 'নমুনা প্রশ্নব্যাংক সফলভাবে ইম্পোর্ট করা হয়েছে!' : 'Sample questions imported successfully!');
+        explanation: '',
+        difficulty: bulkDefaultDifficulty,
+      });
+    }
+    setBuilderQuestions([...builderQuestions, ...newRows]);
+    showToast(`+${count}টি নতুন প্রশ্ন সারি যোগ করা হয়েছে!`);
+  };
+
+  // Multi-Form Builder: Auto-fill Sample
+  const handleAutoFillBuilder = (count: 10 | 20) => {
+    const raw = count === 10 ? SAMPLE_10_QUESTIONS_TEXT : SAMPLE_20_QUESTIONS_TEXT;
+    const parsed = parseQuestionsFromRawText(raw, bulkSetSubject, bulkDefaultDifficulty);
+    const converted: BuilderDraftQuestion[] = parsed.map((p, idx) => ({
+      id: `builder-sample-${Date.now()}-${idx + 1}`,
+      question: p.question,
+      options: [p.options[0], p.options[1], p.options[2], p.options[3]],
+      correctAnswer: p.correctAnswer,
+      explanation: p.explanation,
+      difficulty: p.difficulty || 'medium',
+    }));
+    setBuilderQuestions(converted);
+    showToast(`${count}টি প্রশ্নের নমুনা ফর্ম সফলভাবে লোড হয়েছে!`);
+  };
+
+  // Save Multi-Form Builder
+  const handleSaveBuilderQuestionsSet = () => {
+    const validQuestions = builderQuestions.filter((q) => q.question.trim() && q.options[0].trim());
+    if (validQuestions.length === 0) {
+      showToast('কমপক্ষে ১টি সম্পূর্ণ প্রশ্ন পূরণ করুন!');
+      return;
+    }
+
+    const setId = `set-builder-${Date.now()}`;
+    const taggedQuestions: AdminQuestion[] = validQuestions.map((q, idx) => ({
+      id: `${setId}-q-${idx + 1}`,
+      subject: bulkSetSubject,
+      question: q.question.trim(),
+      options: q.options.map((opt, oIdx) => opt.trim() || `বিকল্প ${oIdx + 1}`),
+      correctAnswer: q.correctAnswer,
+      explanation: q.explanation.trim() || 'সঠিক উত্তর নির্বাচন করা হয়েছে।',
+      difficulty: q.difficulty,
+      setId,
+      setName: bulkSetTitle.trim(),
+    }));
+
+    const newSet: QuestionSet = {
+      id: setId,
+      title: bulkSetTitle.trim() || `কাস্টম প্রশ্ন সেট (${taggedQuestions.length}টি প্রশ্ন)`,
+      subject: bulkSetSubject,
+      category: bulkSetCategory,
+      totalQuestions: taggedQuestions.length,
+      createdAt: 'আজ প্রকাশিত',
+      description: `${bulkSetSubject} বিষয়ের উপর ${taggedQuestions.length}টি প্রশ্নের কাস্টম সেট।`,
+      questions: taggedQuestions,
+    };
+
+    setQuestionSetsList([newSet, ...questionSetsList]);
+    setQuestionsList([...taggedQuestions, ...questionsList]);
+    setIsBulkAddOpen(false);
+    setBuilderQuestions([]);
+    showToast(`সফল হয়েছে! ${taggedQuestions.length}টি প্রশ্ন সেটে যুক্ত হয়েছে!`);
+  };
+
+  // Import Ready-made Preset Set (1-Click)
+  const handleImportPresetSet = (type: '10-bcs' | '20-primary' | '10-bank') => {
+    let rawText = SAMPLE_10_QUESTIONS_TEXT;
+    let title = '৪৭তম বিসিএস ১০টি মেগা প্রশ্ন সেট';
+    let subj = 'বিসিএস প্রিলিমিনারি স্পেশাল';
+    let cat = 'বিসিএস';
+
+    if (type === '20-primary') {
+      rawText = SAMPLE_20_QUESTIONS_TEXT;
+      title = 'প্রাইমারি শিক্ষক নিয়োগ ২০টি পূর্ণাঙ্গ মডেল টেস্ট সেট';
+      subj = 'প্রাইমারি স্পেশাল মডেল টেস্ট';
+      cat = 'প্রাইমারি';
+    } else if (type === '10-bank') {
+      rawText = SAMPLE_10_QUESTIONS_TEXT;
+      title = 'কম্বাইন্ড ব্যাংক অফিসার ১০টি গণিত ও ইংরেজি প্রশ্ন সেট';
+      subj = 'ব্যাংক গণিত ও ইংরেজি';
+      cat = 'ব্যাংক';
+    }
+
+    const parsed = parseQuestionsFromRawText(rawText, subj, 'medium');
+    const setId = `set-preset-${Date.now()}`;
+    const taggedQuestions: AdminQuestion[] = parsed.map((q, idx) => ({
+      ...q,
+      id: `${setId}-q-${idx + 1}`,
+      setId,
+      setName: title,
+      subject: subj,
+    }));
+
+    const newSet: QuestionSet = {
+      id: setId,
+      title,
+      subject: subj,
+      category: cat,
+      totalQuestions: taggedQuestions.length,
+      createdAt: 'আজ প্রকাশিত',
+      description: `রেডিমেড প্রমিত ${taggedQuestions.length}টি প্রশ্ন সেট।`,
+      questions: taggedQuestions,
+    };
+
+    setQuestionSetsList([newSet, ...questionSetsList]);
+    setQuestionsList([...taggedQuestions, ...questionsList]);
+    setIsBulkAddOpen(false);
+    showToast(`অভিনন্দন! "${title}" সেটটিতে ${taggedQuestions.length}টি প্রশ্ন সফলভাবে যোগ হয়েছে!`);
+  };
+
+  // Attach a Question Set directly to an Exam
+  const handleAttachSetToExam = () => {
+    if (!setTargetForExam || !targetExamIdForAttach) {
+      showToast('অনুগ্রহ করে একটি পরীক্ষা নির্বাচন করুন!');
+      return;
+    }
+
+    // Convert AdminQuestions to Exam Question format
+    const convertedQuestions: Question[] = setTargetForExam.questions.map((q, idx) => ({
+      id: idx + 1,
+      question: q.question,
+      options: [q.options[0] || '', q.options[1] || '', q.options[2] || '', q.options[3] || ''],
+      correctAnswer: q.correctAnswer,
+      explanation: q.explanation,
+      subject: q.subject,
+    }));
+
+    setExamsList(
+      examsList.map((ex) => {
+        if (ex.id === targetExamIdForAttach) {
+          return {
+            ...ex,
+            totalQuestions: convertedQuestions.length,
+            totalMarks: convertedQuestions.length,
+            questions: convertedQuestions,
+          };
+        }
+        return ex;
+      })
+    );
+
+    setIsAttachExamModalOpen(false);
+    setSetTargetForExam(null);
+    showToast(`অসাধারণ! "${setTargetForExam.title}" সেটের ${convertedQuestions.length}টি প্রশ্ন পরীক্ষায় সংযুক্ত হয়েছে!`);
+  };
+
+  // Delete Question Set
+  const handleDeleteQuestionSet = (setId: string) => {
+    setQuestionSetsList(questionSetsList.filter((s) => s.id !== setId));
+    setQuestionsList(questionsList.filter((q) => q.setId !== setId));
+    showToast('প্রশ্ন সেটটি সফলভাবে মুছে ফেলা হয়েছে');
   };
 
   // Student / User Management Actions
@@ -695,7 +1151,7 @@ export default function AdminPage() {
     setStudentsList(
       studentsList.map((s) => (s.id === id ? { ...s, status: newStatus } : s))
     );
-    showToast(isBn ? `শিক্ষার্থীর স্ট্যাটাস: ${newStatus} করা হয়েছে` : `Student marked as ${newStatus}`);
+    showToast(`শিক্ষার্থীর স্ট্যাটাস: ${newStatus} করা হয়েছে`);
   };
 
   const handleCreateStudent = (e: React.FormEvent) => {
@@ -708,7 +1164,7 @@ export default function AdminPage() {
       phone: newStudentPhone.trim(),
       email: newStudentEmail.trim() || 'student@examsheba.com',
       batch: newStudentBatch,
-      joinedDate: isBn ? 'আজকে' : 'Today',
+      joinedDate: 'আজকে',
       status: 'active',
       role: newStudentRole,
       examsTaken: 0,
@@ -722,7 +1178,7 @@ export default function AdminPage() {
     setNewStudentName('');
     setNewStudentPhone('');
     setNewStudentEmail('');
-    showToast(isBn ? 'নতুন শিক্ষার্থী সফলভাবে যুক্ত হয়েছে!' : 'New student registered successfully!');
+    showToast('নতুন শিক্ষার্থী সফলভাবে যুক্ত হয়েছে!');
   };
 
   const handleDeleteStudent = (id: string) => {
@@ -730,7 +1186,7 @@ export default function AdminPage() {
     if (selectedStudentForProfile?.id === id) {
       setSelectedStudentForProfile(null);
     }
-    showToast(isBn ? 'শিক্ষার্থী প্রোফাইল মুছে ফেলা হয়েছে' : 'Student record deleted');
+    showToast('শিক্ষার্থী প্রোফাইল মুছে ফেলা হয়েছে');
   };
 
   // Export Student Directory to CSV
@@ -745,7 +1201,7 @@ export default function AdminPage() {
     a.href = url;
     a.download = `exam-seba-students-${Date.now()}.csv`;
     a.click();
-    showToast(isBn ? 'শিক্ষার্থী তালিকা CSV ডাউনলোড শুরু হয়েছে!' : 'Student CSV export downloaded!');
+    showToast('শিক্ষার্থী তালিকা CSV ডাউনলোড শুরু হয়েছে!');
   };
 
   // Notice Actions
@@ -757,7 +1213,7 @@ export default function AdminPage() {
       id: `not-${Date.now()}`,
       title: newNoticeTitle.trim(),
       category: newNoticeCategory,
-      date: isBn ? 'আজকে' : 'Today',
+      date: 'আজকে',
       isUrgent: newNoticeUrgent,
       content: newNoticeContent.trim(),
     };
@@ -767,12 +1223,12 @@ export default function AdminPage() {
     setNewNoticeTitle('');
     setNewNoticeContent('');
     setNewNoticeUrgent(false);
-    showToast(isBn ? 'নোটিশটি সফলভাবে প্রকাশ করা হয়েছে!' : 'Notice published successfully!');
+    showToast('নোটিশটি সফলভাবে প্রকাশ করা হয়েছে!');
   };
 
   const handleDeleteNotice = (id: string) => {
     setNoticesList(noticesList.filter((n) => n.id !== id));
-    showToast(isBn ? 'নোটিশটি ডিলিট করা হয়েছে' : 'Notice deleted');
+    showToast('নোটিশটি ডিলিট করা হয়েছে');
   };
 
   // Export Complete System Backup
@@ -780,6 +1236,7 @@ export default function AdminPage() {
     const backupData = {
       exams: examsList,
       questions: questionsList,
+      questionSets: questionSetsList,
       students: studentsList,
       results: resultsList,
       notices: noticesList,
@@ -799,7 +1256,7 @@ export default function AdminPage() {
     a.href = url;
     a.download = `exam-seba-complete-backup-${Date.now()}.json`;
     a.click();
-    showToast(isBn ? 'সম্পূর্ণ প্ল্যাটফর্ম ব্যাকআপ ডাউনলোড সম্পন্ন হয়েছে!' : 'Platform JSON backup downloaded!');
+    showToast('সম্পূর্ণ প্ল্যাটফর্ম ব্যাকআপ ডাউনলোড সম্পন্ন হয়েছে!');
   };
 
   // Filtered queries
@@ -844,14 +1301,14 @@ export default function AdminPage() {
 
   // Navigation tab configurations
   const navTabs = [
-    { id: 'overview', label: isBn ? 'সার্বিক ড্যাশবোর্ড' : 'Overview', icon: FaChartPie },
-    { id: 'analytics', label: isBn ? 'অ্যানালাইসিস ও রিপোর্টস' : 'Analytics & Insights', icon: FaChartLine },
-    { id: 'students', label: isBn ? 'ইউজার ও শিক্ষার্থী' : 'User Management', icon: FaUsers, badge: studentsList.length },
-    { id: 'exams', label: isBn ? 'পরীক্ষা ব্যবস্থাপনা' : 'Exam Management', icon: FaFileAlt, badge: examsList.length },
-    { id: 'questions', label: isBn ? 'প্রশ্নব্যাংক' : 'Question Bank', icon: FaBookOpen, badge: questionsList.length },
-    { id: 'results', label: isBn ? 'ফলাফল ও মেধা তালিকা' : 'Results & Merit', icon: FaTrophy, badge: resultsList.length },
-    { id: 'notices', label: isBn ? 'নোটিশ ও এলার্ট' : 'Notices', icon: FaBullhorn, badge: noticesList.length },
-    { id: 'settings', label: isBn ? 'প্ল্যাটফর্ম সেটিংস' : 'Settings', icon: FaCog },
+    { id: 'overview', label: 'সার্বিক ড্যাশবোর্ড', icon: FaChartPie },
+    { id: 'analytics', label: 'অ্যানালাইসিস ও রিপোর্টস', icon: FaChartLine },
+    { id: 'students', label: 'ইউজার ও শিক্ষার্থী', icon: FaUsers, badge: studentsList.length },
+    { id: 'exams', label: 'পরীক্ষা ব্যবস্থাপনা', icon: FaFileAlt, badge: examsList.length },
+    { id: 'questions', label: 'প্রশ্নব্যাংক ও সেট', icon: FaBookOpen, badge: questionsList.length },
+    { id: 'results', label: 'ফলাফল ও মেধা তালিকা', icon: FaTrophy, badge: resultsList.length },
+    { id: 'notices', label: 'নোটিশ ও এলার্ট', icon: FaBullhorn, badge: noticesList.length },
+    { id: 'settings', label: 'প্ল্যাটফর্ম সেটিংস', icon: FaCog },
   ];
 
   // ==========================================
@@ -867,7 +1324,7 @@ export default function AdminPage() {
             className="inline-flex items-center gap-2 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full text-xs font-bold transition-all border border-white/20"
           >
             <FaArrowLeft className="w-3.5 h-3.5" />
-            <span>{isBn ? 'মূল সাইটে ফিরুন' : 'Back to Home'}</span>
+            <span>মূল সাইটে ফিরুন</span>
           </Link>
 
           <button
@@ -890,13 +1347,13 @@ export default function AdminPage() {
               </div>
               <div className="inline-flex items-center gap-1.5 bg-red-500/10 border border-red-500/30 text-red-400 px-3 py-0.5 rounded-full text-xs font-bold mb-2">
                 <FaLock className="w-3 h-3" />
-                <span>{isBn ? 'নিরাপদ অ্যাডমিন পোর্টাল' : 'Secure Admin Portal'}</span>
+                <span>নিরাপদ অ্যাডমিন পোর্টাল</span>
               </div>
               <h1 className="text-xl sm:text-2xl font-black text-white">
-                {isBn ? 'অ্যাডমিন কন্ট্রোল সেন্টার' : 'Exam Seba Admin Console'}
+                অ্যাডমিন কন্ট্রোল সেন্টার
               </h1>
               <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
-                {isBn ? 'প্ল্যাটফর্ম পরিচালনা করতে আপনার অ্যাডমিন ক্রেডেনশিয়াল প্রদান করুন' : 'Enter credentials to manage exams, students and analysis'}
+                প্ল্যাটফর্ম পরিচালনা করতে আপনার অ্যাডমিন ক্রেডেনশিয়াল প্রদান করুন
               </p>
             </div>
 
@@ -905,16 +1362,16 @@ export default function AdminPage() {
               <div>
                 <p className="font-bold text-white flex items-center gap-1.5">
                   <FaUserShield className="w-3.5 h-3.5 text-amber-400" />
-                  <span>{isBn ? 'সুপার অ্যাডমিন ডেমো' : 'Super Admin Demo'}</span>
+                  <span>সুপার অ্যাডমিন ডেমো</span>
                 </p>
-                <p className="text-[11px] text-blue-200">{isBn ? '১-ক্লিকে তাৎক্ষণিক আনলক' : '1-Click instant unlock'}</p>
+                <p className="text-[11px] text-blue-200">১-ক্লিকে তাৎক্ষণিক আনলক</p>
               </div>
               <button
                 type="button"
                 onClick={handle1ClickAdminUnlock}
                 className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-3.5 py-1.5 rounded-xl shadow transition-transform hover:scale-105"
               >
-                {isBn ? 'আনলক করুন' : 'Unlock Now'}
+                আনলক করুন
               </button>
             </div>
 
@@ -926,9 +1383,7 @@ export default function AdminPage() {
 
             <form onSubmit={handleAdminDirectLogin} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                  {isBn ? 'অ্যাডমিন ইমেইল' : 'Admin Email'}
-                </label>
+                <label className="block text-xs font-bold text-slate-300 mb-1.5">অ্যাডমিন ইমেইল</label>
                 <input
                   type="email"
                   value={adminInputEmail}
@@ -939,9 +1394,7 @@ export default function AdminPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                  {isBn ? 'সিকিউরিটি পাসওয়ার্ড' : 'Security Password'}
-                </label>
+                <label className="block text-xs font-bold text-slate-300 mb-1.5">সিকিউরিটি পাসওয়ার্ড</label>
                 <input
                   type="password"
                   value={adminInputPassword}
@@ -955,7 +1408,7 @@ export default function AdminPage() {
                 type="submit"
                 className="w-full py-3 bg-gradient-to-r from-[#007bff] to-[#0056b3] hover:from-[#0062cc] hover:to-[#004085] text-white font-extrabold text-sm rounded-xl shadow-lg transition-transform hover:scale-[1.02]"
               >
-                {isBn ? 'লগইন করুন' : 'Login to Admin'}
+                লগইন করুন
               </button>
             </form>
           </div>
@@ -1002,7 +1455,7 @@ export default function AdminPage() {
 
           <div className="px-5 py-2.5 bg-blue-950/40 border-b border-slate-800/60 flex items-center justify-between">
             <span className="text-[10px] font-black uppercase tracking-wider text-blue-400">
-              {isBn ? 'অ্যাডমিন কন্ট্রোল স্যুইট' : 'Admin Control Suite'}
+              অ্যাডমিন কন্ট্রোল স্যুইট
             </span>
             <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -1065,7 +1518,7 @@ export default function AdminPage() {
               className="flex-1 text-center py-2 px-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition-colors flex items-center justify-center gap-1.5"
             >
               <FaArrowLeft className="w-3 h-3" />
-              <span>{isBn ? 'মূল সাইট' : 'View Public Site'}</span>
+              <span>মূল সাইট</span>
             </Link>
 
             <button
@@ -1105,7 +1558,7 @@ export default function AdminPage() {
                 {navTabs.find((t) => t.id === activeTab)?.label}
               </h2>
               <p className="text-[11px] text-slate-500 hidden sm:block">
-                Exam Seba Enterprise Control • রিয়েল-টাইম লাইভ ম্যানেজমেন্ট সিস্টেম
+                Exam Seba Enterprise Control • সেট ভিত্তিক প্রশ্ন ও মাল্টি-অ্যাড ম্যানেজমেন্ট
               </p>
             </div>
           </div>
@@ -1114,7 +1567,7 @@ export default function AdminPage() {
             {/* Live Indicator */}
             <div className="hidden md:flex items-center gap-1.5 bg-red-50 text-red-600 border border-red-200 px-3 py-1 rounded-full text-xs font-bold">
               <FaFire className="w-3.5 h-3.5 animate-bounce" />
-              <span>{isBn ? '৩টি লাইভ এক্সাম চলমান' : '3 Live Exams Running'}</span>
+              <span>৩টি লাইভ এক্সাম চলমান</span>
             </div>
 
             {/* Language Switch */}
@@ -1132,7 +1585,7 @@ export default function AdminPage() {
               target="_blank"
               className="hidden sm:inline-flex items-center gap-1 bg-[#007bff] hover:bg-[#0056b3] text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm"
             >
-              <span>{isBn ? 'সাইট প্রিভিউ' : 'Site Preview'}</span>
+              <span>সাইট প্রিভিউ</span>
             </Link>
           </div>
         </header>
@@ -1186,9 +1639,9 @@ export default function AdminPage() {
                     </span>
                   </div>
                   <div>
-                    <div className="text-2xl font-black text-slate-900">{questionsList.length * 4200 + 150}+</div>
+                    <div className="text-2xl font-black text-slate-900">{questionsList.length} টি</div>
                     <span className="text-[11px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full inline-block mt-1">
-                      পুঙ্খানুপুঙ্খ ব্যাখ্যা সহ
+                      {questionSetsList.length}টি প্রশ্ন সেট সক্রিয়
                     </span>
                   </div>
                 </div>
@@ -1214,10 +1667,22 @@ export default function AdminPage() {
                 <div>
                   <h3 className="text-lg font-black">দ্রুত অ্যাডমিন অ্যাকশন গ্রহণ করুন</h3>
                   <p className="text-xs text-blue-100 mt-1">
-                    নতুন মডেল টেস্ট প্রকাশ করুন, প্রশ্নব্যাংক সমৃদ্ধ করুন, ইউজার ম্যানেজ করুন অথবা নোটিশ জারি করুন।
+                    একসাথে ১০/২০টি প্রশ্ন সেট তৈরি করুন, বাল্ক টেক্সট পার্স করুন বা নতুন পরীক্ষা চালু করুন।
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2.5">
+                  <button
+                    onClick={() => {
+                      setActiveTab('questions');
+                      setQuestionViewMode('sets');
+                      setIsBulkAddOpen(true);
+                    }}
+                    className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 py-2.5 rounded-2xl text-xs flex items-center gap-1.5 shadow-lg transform hover:scale-105"
+                  >
+                    <FaLayerGroup className="w-3.5 h-3.5 text-slate-950" />
+                    <span>একসাথে ১০/২০টি প্রশ্ন অ্যাড</span>
+                  </button>
+
                   <button
                     onClick={() => {
                       setActiveTab('exams');
@@ -1225,22 +1690,12 @@ export default function AdminPage() {
                       setNewExamTitle('');
                       setIsAddExamOpen(true);
                     }}
-                    className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-4 py-2 rounded-2xl text-xs flex items-center gap-1.5 shadow"
+                    className="bg-white hover:bg-blue-50 text-[#007bff] font-bold px-4 py-2 rounded-2xl text-xs flex items-center gap-1.5 shadow"
                   >
                     <FaPlus className="w-3 h-3" />
                     <span>নতুন পরীক্ষা তৈরি</span>
                   </button>
-                  <button
-                    onClick={() => {
-                      setActiveTab('questions');
-                      setEditingQuestion(null);
-                      setIsAddQuestionOpen(true);
-                    }}
-                    className="bg-white hover:bg-blue-50 text-[#007bff] font-bold px-4 py-2 rounded-2xl text-xs flex items-center gap-1.5 shadow"
-                  >
-                    <FaPlus className="w-3 h-3" />
-                    <span>প্রশ্ন যোগ করুন</span>
-                  </button>
+
                   <button
                     onClick={() => {
                       setActiveTab('students');
@@ -1250,15 +1705,6 @@ export default function AdminPage() {
                   >
                     <FaUserPlus className="w-3 h-3" />
                     <span>শিক্ষার্থী যোগ</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setActiveTab('analytics');
-                    }}
-                    className="bg-white/15 hover:bg-white/25 border border-white/30 text-white font-bold px-4 py-2 rounded-2xl text-xs flex items-center gap-1.5"
-                  >
-                    <FaChartLine className="w-3 h-3" />
-                    <span>অ্যানালাইটিক্স রিপোর্ট</span>
                   </button>
                 </div>
               </div>
@@ -1331,7 +1777,7 @@ export default function AdminPage() {
           )}
 
           {/* ========================================================= */}
-          {/* TAB 2: ADVANCED ANALYTICS & INSIGHTS (NEW DEDICATED TAB)  */}
+          {/* TAB 2: ADVANCED ANALYTICS & INSIGHTS                      */}
           {/* ========================================================= */}
           {activeTab === 'analytics' && (
             <div className="space-y-6">
@@ -1427,18 +1873,15 @@ export default function AdminPage() {
                         <stop offset="100%" stopColor="#007bff" stopOpacity="0.0" />
                       </linearGradient>
                     </defs>
-                    {/* Horizontal Grid lines */}
                     <line x1="0" y1="30" x2="700" y2="30" stroke="#f1f5f9" strokeWidth="1" />
                     <line x1="0" y1="75" x2="700" y2="75" stroke="#f1f5f9" strokeWidth="1" />
                     <line x1="0" y1="120" x2="700" y2="120" stroke="#f1f5f9" strokeWidth="1" />
                     <line x1="0" y1="160" x2="700" y2="160" stroke="#e2e8f0" strokeWidth="1.5" />
 
-                    {/* Gradient Area Fill */}
                     <path
                       d="M 50 140 Q 150 90 250 110 T 450 60 T 650 40 L 650 160 L 50 160 Z"
                       fill="url(#chartGradient)"
                     />
-                    {/* Line Stroke */}
                     <path
                       d="M 50 140 Q 150 90 250 110 T 450 60 T 650 40"
                       fill="none"
@@ -1447,7 +1890,6 @@ export default function AdminPage() {
                       strokeLinecap="round"
                     />
 
-                    {/* Data Points */}
                     {[
                       { x: 50, y: 140, label: 'শনি', val: '১,১০০' },
                       { x: 150, y: 95, label: 'রবি', val: '১,৫২০' },
@@ -1471,10 +1913,10 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Two Column Analysis: Subject Difficulty & Score Distribution */}
+              {/* Two Column Analysis */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 
-                {/* Subject-Wise Accuracy & Difficulty Breakdown */}
+                {/* Subject-Wise Accuracy */}
                 <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
                   <h4 className="font-extrabold text-slate-900 text-sm sm:text-base mb-1">
                     বিষয়ভিত্তিক পারফরম্যান্স ও কাঠিন্য মেট্রিক্স
@@ -1516,7 +1958,7 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                {/* Score Distribution & Category Share */}
+                {/* Score Distribution */}
                 <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
                   <div>
                     <h4 className="font-extrabold text-slate-900 text-sm sm:text-base mb-1">
@@ -1595,7 +2037,7 @@ export default function AdminPage() {
           )}
 
           {/* ========================================================= */}
-          {/* TAB 3: COMPLETE USER / STUDENT MANAGEMENT SYSTEM         */}
+          {/* TAB 3: USER / STUDENT MANAGEMENT                          */}
           {/* ========================================================= */}
           {activeTab === 'students' && (
             <div className="space-y-5">
@@ -2223,59 +2665,72 @@ export default function AdminPage() {
           )}
 
           {/* ========================================================= */}
-          {/* TAB 5: QUESTION BANK MANAGEMENT                           */}
+          {/* TAB 5: ADVANCED QUESTION BANK & SET MANAGEMENT            */}
           {/* ========================================================= */}
           {activeTab === 'questions' && (
-            <div className="space-y-5">
+            <div className="space-y-6">
               
-              {/* Header Filters & Add Question */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
-                <div className="flex flex-wrap items-center gap-2 flex-1">
-                  <div className="relative min-w-[200px]">
-                    <FaSearch className="w-3.5 h-3.5 absolute left-3 top-3 text-slate-400" />
-                    <input
-                      type="text"
-                      value={questionSearch}
-                      onChange={(e) => setQuestionSearch(e.target.value)}
-                      placeholder="প্রশ্ন বা ব্যাখ্যা খুঁজুন..."
-                      className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#007bff]"
-                    />
+              {/* Question Bank Top Header & View Switcher */}
+              <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+                      <FaBookOpen className="w-4 h-4" />
+                    </span>
+                    <h3 className="font-extrabold text-slate-900 text-base sm:text-lg">
+                      প্রশ্নব্যাংক ও সেট ভিত্তিক প্রশ্ন ব্যবস্থাপনা
+                    </h3>
                   </div>
-
-                  <select
-                    value={questionSubjectFilter}
-                    onChange={(e) => setQuestionSubjectFilter(e.target.value)}
-                    className="py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#007bff]"
-                  >
-                    <option value="all">সকল বিষয়</option>
-                    <option value="বাংলা সাহিত্য ও ব্যাকরণ">বাংলা সাহিত্য ও ব্যাকরণ</option>
-                    <option value="ইংরেজি ব্যাকরণ ও সাহিত্য">ইংরেজি ব্যাকরণ ও সাহিত্য</option>
-                    <option value="গণিত ও মানসিক দক্ষতা">গণিত ও মানসিক দক্ষতা</option>
-                    <option value="বাংলাদেশ বিষয়াবলী">বাংলাদেশ বিষয়াবলী</option>
-                    <option value="আন্তর্জাতিক বিষয়াবলী">আন্তর্জাতিক বিষয়াবলী</option>
-                    <option value="সাধারণ বিজ্ঞান ও আইসিটি">সাধারণ বিজ্ঞান ও আইসিটি</option>
-                  </select>
-
-                  <select
-                    value={questionDifficultyFilter}
-                    onChange={(e) => setQuestionDifficultyFilter(e.target.value)}
-                    className="py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#007bff]"
-                  >
-                    <option value="all">সকল কাঠিন্য স্তর</option>
-                    <option value="easy">সহজ (Easy)</option>
-                    <option value="medium">মাঝারি (Medium)</option>
-                    <option value="hard">কঠিন (Hard)</option>
-                  </select>
+                  <p className="text-xs text-slate-500">
+                    একক প্রশ্ন সংযোজন অথবা সেট আকারে একসাথে ১০টি/২০টি প্রশ্ন সহজে তৈরি ও ম্যানেজ করুন
+                  </p>
                 </div>
 
-                <div className="flex items-center gap-2">
+                {/* View Switcher: Individual vs Sets */}
+                <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-2xl text-xs font-bold">
                   <button
-                    onClick={handleImportSampleQuestions}
-                    className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors"
+                    onClick={() => setQuestionViewMode('sets')}
+                    className={`px-4 py-2 rounded-xl flex items-center gap-1.5 transition-all ${
+                      questionViewMode === 'sets'
+                        ? 'bg-gradient-to-r from-[#007bff] to-[#0056b3] text-white shadow-md'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
                   >
-                    নমুনা প্রশ্ন ইম্পোর্ট
+                    <FaLayerGroup className="w-3.5 h-3.5" />
+                    <span>প্রশ্ন সেটসমূহ ({questionSetsList.length})</span>
                   </button>
 
+                  <button
+                    onClick={() => setQuestionViewMode('individual')}
+                    className={`px-4 py-2 rounded-xl flex items-center gap-1.5 transition-all ${
+                      questionViewMode === 'individual'
+                        ? 'bg-gradient-to-r from-[#007bff] to-[#0056b3] text-white shadow-md'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    <FaListOl className="w-3.5 h-3.5" />
+                    <span>সকল একক প্রশ্ন ({questionsList.length})</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Main Actions Bar */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-blue-50/70 via-indigo-50/50 to-white p-4 rounded-3xl border border-blue-100 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold shadow-md shadow-blue-500/20">
+                    <FaMagic className="w-5 h-5 text-amber-300" />
+                  </div>
+                  <div>
+                    <h4 className="font-black text-slate-900 text-sm">
+                      একসাথে ১০/২০টি প্রশ্ন সেট আকারে অ্যাড
+                    </h4>
+                    <p className="text-xs text-slate-500">
+                      টেক্সট পেস্ট করে স্মার্ট পার্সার বা মাল্টি-ফর্ম বিল্ডার দিয়ে তাৎক্ষণিক প্রশ্ন সেট বানান
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
                   <button
                     onClick={() => {
                       setEditingQuestion(null);
@@ -2287,95 +2742,896 @@ export default function AdminPage() {
                       setNewQExplanation('');
                       setIsAddQuestionOpen(true);
                     }}
-                    className="bg-[#007bff] hover:bg-[#0056b3] text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow"
+                    className="px-4 py-2.5 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all"
                   >
-                    <FaPlus className="w-3 h-3" />
-                    <span>প্রশ্ন যোগ করুন</span>
+                    <FaPlus className="w-3 h-3 text-[#007bff]" />
+                    <span>+১টি একক প্রশ্ন যোগ</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setBulkModeTab('text-parser');
+                      setBulkRawText(SAMPLE_10_QUESTIONS_TEXT);
+                      setParsedQuestions(initial10Questions);
+                      setIsBulkAddOpen(true);
+                    }}
+                    className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-[#007bff] via-blue-600 to-[#0056b3] hover:from-[#0062cc] hover:to-[#004085] text-white font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-blue-500/25 transition-transform hover:scale-105"
+                  >
+                    <FaLayerGroup className="w-4 h-4 text-amber-300" />
+                    <span>⚡ একসাথে ১০/২০টি প্রশ্ন সেট অ্যাড</span>
                   </button>
                 </div>
               </div>
 
-              {/* Questions List */}
-              <div className="space-y-4">
-                {filteredQuestions.map((q, idx) => (
-                  <div
-                    key={q.id}
-                    className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm relative group hover:border-blue-200 transition-colors"
-                  >
-                    <div className="flex items-center justify-between mb-2.5">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-black uppercase tracking-wider bg-blue-50 text-[#007bff] px-3 py-0.5 rounded-full border border-blue-200">
-                          {q.subject}
-                        </span>
-                        <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                            q.difficulty === 'easy'
-                              ? 'bg-emerald-100 text-emerald-800'
-                              : q.difficulty === 'hard'
-                              ? 'bg-rose-100 text-rose-800'
-                              : 'bg-amber-100 text-amber-800'
-                          }`}
-                        >
-                          {q.difficulty === 'easy' ? 'সহজ' : q.difficulty === 'hard' ? 'কঠিন' : 'মাঝারি'}
-                        </span>
+              {/* ========================================================= */}
+              {/* SUB-VIEW 1: QUESTION SETS (সেট আকারে প্রদর্শন)           */}
+              {/* ========================================================= */}
+              {questionViewMode === 'sets' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between text-xs text-slate-600 font-bold px-1">
+                    <span>সক্রিয় প্রশ্ন সেটসমূহ: মোট {questionSetsList.length}টি সেট</span>
+                    <span className="text-blue-600">প্রতিটি সেট সরাসরি যেকোনো পরীক্ষায় সংযুক্ত করা যায়</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {questionSetsList.map((set) => (
+                      <div
+                        key={set.id}
+                        className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm hover:border-blue-300 transition-all flex flex-col justify-between"
+                      >
+                        <div>
+                          {/* Set Badge & Header */}
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-blue-50 text-[#007bff] border border-blue-200">
+                              {set.category}
+                            </span>
+                            <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1.5 shadow-sm">
+                              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                              <span>{set.totalQuestions}টি প্রশ্ন সেট</span>
+                            </span>
+                          </div>
+
+                          <h4 className="font-extrabold text-slate-900 text-base mb-1.5 leading-snug">
+                            {set.title}
+                          </h4>
+                          <p className="text-xs text-slate-500 mb-4 line-clamp-2">
+                            {set.description || `${set.subject} বিষয়ের উপর প্রস্তুতকৃত পূর্ণাঙ্গ প্রশ্ন সেট।`}
+                          </p>
+
+                          {/* Preview Question Pills */}
+                          <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 mb-5 space-y-1.5 text-xs text-slate-700">
+                            <div className="text-[11px] font-bold text-slate-500 flex items-center justify-between mb-1">
+                              <span>নমুনা প্রশ্ন প্রিভিউ:</span>
+                              <span className="text-blue-600 font-semibold">{set.questions.length}টি সংরক্ষিত</span>
+                            </div>
+                            {set.questions.slice(0, 2).map((q, qIdx) => (
+                              <div key={qIdx} className="truncate text-slate-600 font-medium">
+                                <span className="font-bold text-slate-800 mr-1">{qIdx + 1}.</span>
+                                {q.question}
+                              </div>
+                            ))}
+                            {set.questions.length > 2 && (
+                              <span className="text-[11px] text-blue-600 font-bold block pt-1">
+                                + আরও {set.questions.length - 2}টি প্রশ্ন এই সেটে রয়েছে...
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Set Actions Toolbar */}
+                        <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+                          <button
+                            onClick={() => setSelectedSetToView(set)}
+                            className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center gap-1.5 transition-colors"
+                          >
+                            <FaEye className="w-3.5 h-3.5 text-slate-500" />
+                            <span>সবগুলো দেখুন</span>
+                          </button>
+
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => {
+                                setSetTargetForExam(set);
+                                setTargetExamIdForAttach(examsList[0]?.id || '');
+                                setIsAttachExamModalOpen(true);
+                              }}
+                              className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center gap-1.5 shadow-sm"
+                            >
+                              <FaAward className="w-3.5 h-3.5 text-amber-300" />
+                              <span>পরীক্ষায় যুক্ত করুন</span>
+                            </button>
+
+                            <button
+                              onClick={() => handleDeleteQuestionSet(set.id)}
+                              className="p-2 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 transition-colors"
+                              title="সেট মুছে ফেলুন"
+                            >
+                              <FaTrash className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* ========================================================= */}
+              {/* SUB-VIEW 2: INDIVIDUAL QUESTIONS (একক প্রশ্ন তালিকা)      */}
+              {/* ========================================================= */}
+              {questionViewMode === 'individual' && (
+                <div className="space-y-4">
+                  {/* Search and Filter */}
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+                    <div className="flex flex-wrap items-center gap-2 flex-1">
+                      <div className="relative min-w-[200px]">
+                        <FaSearch className="w-3.5 h-3.5 absolute left-3 top-3 text-slate-400" />
+                        <input
+                          type="text"
+                          value={questionSearch}
+                          onChange={(e) => setQuestionSearch(e.target.value)}
+                          placeholder="প্রশ্ন বা ব্যাখ্যা খুঁজুন..."
+                          className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#007bff]"
+                        />
                       </div>
 
-                      <div className="flex items-center gap-1">
+                      <select
+                        value={questionSubjectFilter}
+                        onChange={(e) => setQuestionSubjectFilter(e.target.value)}
+                        className="py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#007bff]"
+                      >
+                        <option value="all">সকল বিষয়</option>
+                        <option value="বিসিএস ও সাধারণ প্রস্তুতি">বিসিএস ও সাধারণ প্রস্তুতি</option>
+                        <option value="প্রাইমারি ও মডেল টেস্ট">প্রাইমারি ও মডেল টেস্ট</option>
+                        <option value="বাংলা সাহিত্য ও ব্যাকরণ">বাংলা সাহিত্য ও ব্যাকরণ</option>
+                        <option value="ইংরেজি ব্যাকরণ ও সাহিত্য">ইংরেজি ব্যাকরণ ও সাহিত্য</option>
+                        <option value="গণিত ও মানসিক দক্ষতা">গণিত ও মানসিক দক্ষতা</option>
+                        <option value="বাংলাদেশ বিষয়াবলী">বাংলাদেশ বিষয়াবলী</option>
+                        <option value="আন্তর্জাতিক বিষয়াবলী">আন্তর্জাতিক বিষয়াবলী</option>
+                        <option value="সাধারণ বিজ্ঞান ও আইসিটি">সাধারণ বিজ্ঞান ও আইসিটি</option>
+                      </select>
+
+                      <select
+                        value={questionDifficultyFilter}
+                        onChange={(e) => setQuestionDifficultyFilter(e.target.value)}
+                        className="py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#007bff]"
+                      >
+                        <option value="all">সকল কাঠিন্য স্তর</option>
+                        <option value="easy">সহজ (Easy)</option>
+                        <option value="medium">মাঝারি (Medium)</option>
+                        <option value="hard">কঠিন (Hard)</option>
+                      </select>
+                    </div>
+
+                    <span className="text-xs font-bold text-slate-500">
+                      মোট {filteredQuestions.length}টি প্রশ্ন
+                    </span>
+                  </div>
+
+                  {/* Question Cards */}
+                  <div className="space-y-3.5">
+                    {filteredQuestions.map((q, idx) => (
+                      <div
+                        key={q.id}
+                        className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm relative group hover:border-blue-200 transition-colors"
+                      >
+                        <div className="flex items-center justify-between mb-2.5">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-black uppercase tracking-wider bg-blue-50 text-[#007bff] px-3 py-0.5 rounded-full border border-blue-200">
+                              {q.subject}
+                            </span>
+                            {q.setName && (
+                              <span className="text-[10px] font-bold bg-purple-50 text-purple-700 px-2.5 py-0.5 rounded-full">
+                                {q.setName}
+                              </span>
+                            )}
+                            <span
+                              className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                q.difficulty === 'easy'
+                                  ? 'bg-emerald-100 text-emerald-800'
+                                  : q.difficulty === 'hard'
+                                  ? 'bg-rose-100 text-rose-800'
+                                  : 'bg-amber-100 text-amber-800'
+                              }`}
+                            >
+                              {q.difficulty === 'easy' ? 'সহজ' : q.difficulty === 'hard' ? 'কঠিন' : 'মাঝারি'}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => handleOpenEditQuestion(q)}
+                              className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                              title="সম্পাদনা করুন"
+                            >
+                              <FaEdit className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteQuestion(q.id)}
+                              className="p-1.5 text-slate-400 hover:text-rose-500 rounded-lg transition-colors"
+                              title="মুছে ফেলুন"
+                            >
+                              <FaTrash className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <p className="font-bold text-slate-900 text-sm sm:text-base mb-3 leading-relaxed">
+                          {idx + 1}. {q.question}
+                        </p>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+                          {q.options.map((op, opIdx) => (
+                            <div
+                              key={opIdx}
+                              className={`p-2.5 rounded-xl text-xs flex items-center gap-2.5 ${
+                                opIdx === q.correctAnswer
+                                  ? 'bg-emerald-50 text-emerald-950 font-bold border border-emerald-300'
+                                  : 'bg-slate-50 text-slate-700'
+                              }`}
+                            >
+                              <span
+                                className={`w-5 h-5 rounded-full text-[10px] flex items-center justify-center font-bold ${
+                                  opIdx === q.correctAnswer
+                                    ? 'bg-emerald-500 text-white'
+                                    : 'bg-slate-200 text-slate-600'
+                                }`}
+                              >
+                                {opIdx + 1}
+                              </span>
+                              <span>{op}</span>
+                              {opIdx === q.correctAnswer && <span className="text-[10px] text-emerald-700 font-extrabold ml-auto">(সঠিক)</span>}
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="text-xs text-slate-600 bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                          <strong className="text-[#007bff]">ব্যাখ্যা ও রেফারেন্স: </strong>
+                          {q.explanation}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* ========================================================= */}
+              {/* MODAL: BULK QUESTION ADD / SET BUILDER (১০/২০টি প্রশ্ন)   */}
+              {/* ========================================================= */}
+              {isBulkAddOpen && (
+                <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-5">
+                  <div className="bg-white rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 max-h-[92vh] overflow-y-auto flex flex-col justify-between">
+                    
+                    {/* Modal Header */}
+                    <div>
+                      <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-2xl bg-blue-100 text-[#007bff] flex items-center justify-center font-bold shadow-inner">
+                            <FaLayerGroup className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h3 className="font-extrabold text-slate-900 text-base sm:text-lg">
+                              একসাথে ১০/২০টি প্রশ্ন সেট আকারে অ্যাড করুন
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              টেক্সট পেস্ট করে স্মার্ট পার্সার বা মাল্টি-ফর্ম বিল্ডার দিয়ে সহজে প্রশ্ন সেট তৈরি করুন
+                            </p>
+                          </div>
+                        </div>
+
+                        <button onClick={() => setIsBulkAddOpen(false)} className="text-slate-400 hover:text-slate-700 p-1">
+                          <FaTimes size={20} />
+                        </button>
+                      </div>
+
+                      {/* Common Set Metadata Inputs */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-5">
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 mb-1">সেটের নাম *</label>
+                          <input
+                            type="text"
+                            value={bulkSetTitle}
+                            onChange={(e) => setBulkSetTitle(e.target.value)}
+                            placeholder="যেমন: ৪৭তম বিসিএস মেগা সেট - ০১"
+                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 mb-1">বিষয় *</label>
+                          <select
+                            value={bulkSetSubject}
+                            onChange={(e) => setBulkSetSubject(e.target.value)}
+                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold"
+                          >
+                            <option value="বিসিএস ও সাধারণ প্রস্তুতি">বিসিএস ও সাধারণ প্রস্তুতি</option>
+                            <option value="প্রাইমারি ও মডেল টেস্ট">প্রাইমারি ও মডেল টেস্ট</option>
+                            <option value="বাংলা সাহিত্য ও ব্যাকরণ">বাংলা সাহিত্য ও ব্যাকরণ</option>
+                            <option value="ইংরেজি ব্যাকরণ ও সাহিত্য">ইংরেজি ব্যাকরণ ও সাহিত্য</option>
+                            <option value="গণিত ও মানসিক দক্ষতা">গণিত ও মানসিক দক্ষতা</option>
+                            <option value="বাংলাদেশ বিষয়াবলী">বাংলাদেশ বিষয়াবলী</option>
+                            <option value="আন্তর্জাতিক বিষয়াবলী">আন্তর্জাতিক বিষয়াবলী</option>
+                            <option value="সাধারণ বিজ্ঞান ও আইসিটি">সাধারণ বিজ্ঞান ও আইসিটি</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 mb-1">ক্যাটাগরি</label>
+                          <select
+                            value={bulkSetCategory}
+                            onChange={(e) => setBulkSetCategory(e.target.value)}
+                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold"
+                          >
+                            <option value="বিসিএস">বিসিএস (BCS)</option>
+                            <option value="প্রাইমারি">প্রাইমারি শিক্ষক নিয়োগ</option>
+                            <option value="নিবন্ধন">শিক্ষক নিবন্ধন (NTRCA)</option>
+                            <option value="ব্যাংক">ব্যাংক জবস</option>
+                            <option value="সাধারণ">সাধারণ মডেল টেস্ট</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* 3 Bulk Modes Tabs */}
+                      <div className="flex border-b border-slate-200 mb-5 gap-2 text-xs font-bold">
                         <button
-                          onClick={() => handleOpenEditQuestion(q)}
-                          className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                          title="সম্পাদনা করুন"
+                          onClick={() => setBulkModeTab('text-parser')}
+                          className={`pb-2.5 px-3 flex items-center gap-1.5 border-b-2 transition-all ${
+                            bulkModeTab === 'text-parser'
+                              ? 'border-[#007bff] text-[#007bff]'
+                              : 'border-transparent text-slate-500 hover:text-slate-800'
+                          }`}
+                        >
+                          <FaPaste className="w-3.5 h-3.5" />
+                          <span>১. টেক্সট পেস্ট ও স্মার্ট পার্সার</span>
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            setBulkModeTab('builder');
+                            if (builderQuestions.length === 0) handleAddBuilderRows(5);
+                          }}
+                          className={`pb-2.5 px-3 flex items-center gap-1.5 border-b-2 transition-all ${
+                            bulkModeTab === 'builder'
+                              ? 'border-[#007bff] text-[#007bff]'
+                              : 'border-transparent text-slate-500 hover:text-slate-800'
+                          }`}
                         >
                           <FaEdit className="w-3.5 h-3.5" />
+                          <span>২. মাল্টি-কোশ্চেন ফর্ম বিল্ডার ({builderQuestions.length}টি)</span>
                         </button>
+
                         <button
-                          onClick={() => handleDeleteQuestion(q.id)}
-                          className="p-1.5 text-slate-400 hover:text-rose-500 rounded-lg transition-colors"
-                          title="মুছে ফেলুন"
+                          onClick={() => setBulkModeTab('presets')}
+                          className={`pb-2.5 px-3 flex items-center gap-1.5 border-b-2 transition-all ${
+                            bulkModeTab === 'presets'
+                              ? 'border-[#007bff] text-[#007bff]'
+                              : 'border-transparent text-slate-500 hover:text-slate-800'
+                          }`}
                         >
-                          <FaTrash className="w-3.5 h-3.5" />
+                          <FaMagic className="w-3.5 h-3.5 text-amber-500" />
+                          <span>৩. ১-ক্লিকে রেডি-মেড সেট ইম্পোর্ট</span>
                         </button>
+                      </div>
+
+                      {/* =================================================== */}
+                      {/* MODE 1: SMART TEXT PARSER                           */}
+                      {/* =================================================== */}
+                      {bulkModeTab === 'text-parser' && (
+                        <div className="space-y-4">
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <span className="text-xs font-bold text-slate-700">
+                              ওয়ার্ড, পিডিএফ বা নোটপ্যাড থেকে প্রশ্ন পেস্ট করুন:
+                            </span>
+
+                            {/* Preset Sample Buttons */}
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setBulkRawText(SAMPLE_10_QUESTIONS_TEXT);
+                                  const parsed = parseQuestionsFromRawText(SAMPLE_10_QUESTIONS_TEXT, bulkSetSubject, bulkDefaultDifficulty);
+                                  setParsedQuestions(parsed);
+                                  showToast('১০টি প্রশ্নের নমুনা টেক্সট লোড হয়েছে!');
+                                }}
+                                className="px-3 py-1 bg-blue-50 text-[#007bff] hover:bg-blue-100 rounded-xl text-xs font-bold border border-blue-200"
+                              >
+                                📄 ১০টি প্রশ্নের নমুনা লোড
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setBulkRawText(SAMPLE_20_QUESTIONS_TEXT);
+                                  const parsed = parseQuestionsFromRawText(SAMPLE_20_QUESTIONS_TEXT, bulkSetSubject, bulkDefaultDifficulty);
+                                  setParsedQuestions(parsed);
+                                  showToast('২০টি প্রশ্নের পূর্ণাঙ্গ মেগা নমুনা লোড হয়েছে!');
+                                }}
+                                className="px-3 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl text-xs font-bold border border-emerald-200"
+                              >
+                                ⚡ ২০টি প্রশ্নের মেগা নমুনা লোড
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setBulkRawText('');
+                                  setParsedQuestions([]);
+                                }}
+                                className="px-2 py-1 bg-slate-100 text-slate-500 hover:text-rose-600 rounded-xl text-xs"
+                              >
+                                পরিষ্কার
+                              </button>
+                            </div>
+                          </div>
+
+                          <textarea
+                            rows={8}
+                            value={bulkRawText}
+                            onChange={(e) => setBulkRawText(e.target.value)}
+                            placeholder="১. প্রশ্ন লিখুন...&#10;ক) অপশন ১&#10;খ) অপশন ২&#10;গ) অপশন ৩&#10;ঘ) অপশন ৪&#10;উত্তর: ক&#10;ব্যাখ্যা: উত্তরের ব্যাখ্যা..."
+                            className="w-full p-4 bg-slate-50 border border-slate-300 rounded-2xl text-xs sm:text-sm font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-[#007bff]"
+                          />
+
+                          <div className="flex items-center justify-between">
+                            <span className="text-[11px] text-slate-500">
+                              সহজ ফরম্যাট: প্রশ্ন নং, অপশন (ক/খ/গ/ঘ বা A/B/C/D), উত্তর ও ব্যাখ্যা স্বয়ংক্রিয়ভাবে শনাক্ত হবে।
+                            </span>
+
+                            <button
+                              type="button"
+                              onClick={handleParseBulkRawText}
+                              className="px-5 py-2 rounded-xl bg-[#007bff] hover:bg-[#0056b3] text-white font-bold text-xs flex items-center gap-1.5 shadow"
+                            >
+                              <FaMagic className="w-3.5 h-3.5" />
+                              <span>পার্স ও প্রিভিউ আপডেট করুন</span>
+                            </button>
+                          </div>
+
+                          {/* Live Parsed Questions Preview */}
+                          {parsedQuestions.length > 0 && (
+                            <div className="mt-4 pt-4 border-t border-slate-200">
+                              <div className="flex items-center justify-between mb-3">
+                                <h5 className="font-extrabold text-xs sm:text-sm text-slate-800 flex items-center gap-1.5">
+                                  <FaCheckCircle className="w-4 h-4 text-emerald-600" />
+                                  <span>পার্সকৃত প্রশ্ন প্রিভিউ: {parsedQuestions.length}টি প্রশ্ন প্রস্তুত</span>
+                                </h5>
+                                <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                                  সবগুলো ভ্যালিড
+                                </span>
+                              </div>
+
+                              <div className="max-h-60 overflow-y-auto space-y-2.5 p-1">
+                                {parsedQuestions.map((pq, pIdx) => (
+                                  <div
+                                    key={pIdx}
+                                    className="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs"
+                                  >
+                                    <div className="font-bold text-slate-900 mb-1">
+                                      {pIdx + 1}. {pq.question}
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-1.5 text-[11px] text-slate-600 mb-1">
+                                      {pq.options.map((opt, oIdx) => (
+                                        <span
+                                          key={oIdx}
+                                          className={`px-2 py-0.5 rounded-lg ${
+                                            oIdx === pq.correctAnswer
+                                              ? 'bg-emerald-100 text-emerald-900 font-bold border border-emerald-300'
+                                              : 'bg-white border border-slate-200'
+                                          }`}
+                                        >
+                                          {oIdx + 1}) {opt}
+                                        </span>
+                                      ))}
+                                    </div>
+                                    <div className="text-[11px] text-slate-500">
+                                      <strong>ব্যাখ্যা: </strong> {pq.explanation}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* =================================================== */}
+                      {/* MODE 2: INTERACTIVE MULTI-FORM BUILDER              */}
+                      {/* =================================================== */}
+                      {bulkModeTab === 'builder' && (
+                        <div className="space-y-4">
+                          {/* Batch Presets Toolbar */}
+                          <div className="flex flex-wrap items-center justify-between gap-2 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                            <span className="text-xs font-bold text-slate-700">
+                              এক ক্লিকে একাধিক প্রশ্ন সারি যোগ করুন:
+                            </span>
+
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => handleAddBuilderRows(5)}
+                                className="px-3 py-1.5 bg-blue-50 text-[#007bff] hover:bg-blue-100 rounded-xl text-xs font-bold border border-blue-200"
+                              >
+                                +৫টি প্রশ্ন যোগ
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleAddBuilderRows(10)}
+                                className="px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl text-xs font-bold border border-emerald-200"
+                              >
+                                +১০টি প্রশ্ন যোগ
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleAddBuilderRows(20)}
+                                className="px-3 py-1.5 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-xl text-xs font-bold border border-purple-200"
+                              >
+                                +২০টি প্রশ্ন যোগ
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleAutoFillBuilder(10)}
+                                className="px-3 py-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-xl text-xs font-bold"
+                              >
+                                নমুনা ডাটা লোড
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Builder Rows List */}
+                          <div className="max-h-96 overflow-y-auto space-y-4 p-1">
+                            {builderQuestions.map((row, rIdx) => (
+                              <div
+                                key={row.id}
+                                className="p-4 bg-slate-50/70 rounded-2xl border border-slate-200 relative group"
+                              >
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-xs font-black text-[#007bff]">
+                                    প্রশ্ন নং: {rIdx + 1}
+                                  </span>
+
+                                  <div className="flex items-center gap-2">
+                                    <select
+                                      value={row.difficulty}
+                                      onChange={(e) => {
+                                        const updated = [...builderQuestions];
+                                        updated[rIdx].difficulty = e.target.value as any;
+                                        setBuilderQuestions(updated);
+                                      }}
+                                      className="py-1 px-2 bg-white border border-slate-200 rounded-lg text-[11px] font-semibold"
+                                    >
+                                      <option value="easy">সহজ</option>
+                                      <option value="medium">মাঝারি</option>
+                                      <option value="hard">কঠিন</option>
+                                    </select>
+
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setBuilderQuestions(builderQuestions.filter((_, i) => i !== rIdx));
+                                      }}
+                                      className="text-slate-400 hover:text-rose-500 p-1"
+                                      title="সারি মুছুন"
+                                    >
+                                      <FaTrash className="w-3 h-3" />
+                                    </button>
+                                  </div>
+                                </div>
+
+                                <input
+                                  type="text"
+                                  value={row.question}
+                                  onChange={(e) => {
+                                    const updated = [...builderQuestions];
+                                    updated[rIdx].question = e.target.value;
+                                    setBuilderQuestions(updated);
+                                  }}
+                                  placeholder={`প্রশ্ন নং ${rIdx + 1} লিখুন...`}
+                                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold mb-2.5"
+                                />
+
+                                <div className="grid grid-cols-2 gap-2 mb-2.5">
+                                  {[0, 1, 2, 3].map((optIndex) => (
+                                    <div key={optIndex} className="flex items-center gap-1.5">
+                                      <input
+                                        type="radio"
+                                        name={`correct-${row.id}`}
+                                        checked={row.correctAnswer === optIndex}
+                                        onChange={() => {
+                                          const updated = [...builderQuestions];
+                                          updated[rIdx].correctAnswer = optIndex;
+                                          setBuilderQuestions(updated);
+                                        }}
+                                        className="w-3.5 h-3.5 text-[#007bff]"
+                                        title="সঠিক উত্তর হিসেবে চিহ্নিত করুন"
+                                      />
+                                      <input
+                                        type="text"
+                                        value={row.options[optIndex]}
+                                        onChange={(e) => {
+                                          const updated = [...builderQuestions];
+                                          updated[rIdx].options[optIndex] = e.target.value;
+                                          setBuilderQuestions(updated);
+                                        }}
+                                        placeholder={`অপশন ${optIndex + 1}`}
+                                        className={`w-full px-2.5 py-1.5 bg-white border rounded-xl text-xs ${
+                                          row.correctAnswer === optIndex
+                                            ? 'border-emerald-500 font-bold bg-emerald-50/30'
+                                            : 'border-slate-200'
+                                        }`}
+                                      />
+                                    </div>
+                                  ))}
+                                </div>
+
+                                <input
+                                  type="text"
+                                  value={row.explanation}
+                                  onChange={(e) => {
+                                    const updated = [...builderQuestions];
+                                    updated[rIdx].explanation = e.target.value;
+                                    setBuilderQuestions(updated);
+                                  }}
+                                  placeholder="ব্যাখ্যা বা রেফারেন্স নোট..."
+                                  className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-600"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* =================================================== */}
+                      {/* MODE 3: 1-CLICK READY-MADE PRESET IMPORT           */}
+                      {/* =================================================== */}
+                      {bulkModeTab === 'presets' && (
+                        <div className="space-y-4">
+                          <p className="text-xs text-slate-600 font-medium">
+                            নিচে পরীক্ষিত ও প্রমিত চাকরির পরীক্ষার রেডি-মেড প্রশ্ন সেট দেওয়া রয়েছে। ১-ক্লিকে পুরো সেট প্রশ্নব্যাংকে আমদানি করুন:
+                          </p>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                            {/* Preset 1 */}
+                            <div className="p-5 rounded-2xl border border-blue-200 bg-blue-50/40 flex flex-col justify-between">
+                              <div>
+                                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">
+                                  ১০টি বিসিএস প্রশ্ন
+                                </span>
+                                <h5 className="font-extrabold text-sm text-slate-900 mt-2 mb-1">
+                                  ৪৭তম বিসিএস মেগা সেট
+                                </h5>
+                                <p className="text-[11px] text-slate-500 mb-4">
+                                  বাংলা সাহিত্য, ব্যাকরণ, ইংরেজি ও বাংলাদেশ বিষয়াবলীর ১০টি প্রমিত নৈর্ব্যক্তিক।
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleImportPresetSet('10-bcs')}
+                                className="w-full py-2 bg-[#007bff] hover:bg-[#0056b3] text-white font-bold text-xs rounded-xl shadow transition-transform hover:scale-105"
+                              >
+                                ১-ক্লিকে সেট ইম্পোর্ট
+                              </button>
+                            </div>
+
+                            {/* Preset 2 */}
+                            <div className="p-5 rounded-2xl border border-emerald-200 bg-emerald-50/40 flex flex-col justify-between">
+                              <div>
+                                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                                  ২০টি প্রাইমারি প্রশ্ন
+                                </span>
+                                <h5 className="font-extrabold text-sm text-slate-900 mt-2 mb-1">
+                                  প্রাইমারি শিক্ষক নিয়োগ সেট
+                                </h5>
+                                <p className="text-[11px] text-slate-500 mb-4">
+                                  প্রাইমারি শিক্ষক নিয়োগ পরীক্ষার পূর্ণাঙ্গ ২০টি প্রশ্ন ব্যাখ্যাসহ প্রস্তুত।
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleImportPresetSet('20-primary')}
+                                className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow transition-transform hover:scale-105"
+                              >
+                                ১-ক্লিকে ২০টি প্রশ্ন ইম্পোর্ট
+                              </button>
+                            </div>
+
+                            {/* Preset 3 */}
+                            <div className="p-5 rounded-2xl border border-purple-200 bg-purple-50/40 flex flex-col justify-between">
+                              <div>
+                                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800">
+                                  ১০টি ব্যাংক জব প্রশ্ন
+                                </span>
+                                <h5 className="font-extrabold text-sm text-slate-900 mt-2 mb-1">
+                                  ব্যাংক গণিত ও ইংরেজি
+                                </h5>
+                                <p className="text-[11px] text-slate-500 mb-4">
+                                  কম্বাইন্ড ব্যাংক অফিসার প্রিলিমিনারি উপযোগী ১০টি প্রশ্ন সেট।
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleImportPresetSet('10-bank')}
+                                className="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl shadow transition-transform hover:scale-105"
+                              >
+                                ১-ক্লিকে সেট ইম্পোর্ট
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Modal Bottom Save Action */}
+                    <div className="mt-6 pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+                      <span className="text-xs text-slate-500">
+                        {bulkModeTab === 'text-parser'
+                          ? `পার্সকৃত মোট ${parsedQuestions.length}টি প্রশ্ন যুক্ত হবে`
+                          : bulkModeTab === 'builder'
+                          ? `বিল্ডারে মোট ${builderQuestions.length}টি প্রশ্ন সক্রিয়`
+                          : 'রেডিমেড সেট সিলেক্ট করুন'}
+                      </span>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setIsBulkAddOpen(false)}
+                          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold"
+                        >
+                          বাতিল
+                        </button>
+
+                        {bulkModeTab === 'text-parser' && (
+                          <button
+                            type="button"
+                            onClick={handleSaveBulkQuestionsSet}
+                            disabled={parsedQuestions.length === 0}
+                            className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:opacity-40 text-white font-extrabold text-xs rounded-xl shadow-lg transition-transform hover:scale-105"
+                          >
+                            💾 {parsedQuestions.length}টি প্রশ্ন সেটে সেভ করুন
+                          </button>
+                        )}
+
+                        {bulkModeTab === 'builder' && (
+                          <button
+                            type="button"
+                            onClick={handleSaveBuilderQuestionsSet}
+                            disabled={builderQuestions.length === 0}
+                            className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:opacity-40 text-white font-extrabold text-xs rounded-xl shadow-lg transition-transform hover:scale-105"
+                          >
+                            💾 সকল প্রশ্ন সেটে সংরক্ষণ করুন
+                          </button>
+                        )}
                       </div>
                     </div>
 
-                    <p className="font-bold text-slate-900 text-sm sm:text-base mb-3 leading-relaxed">
-                      {idx + 1}. {q.question}
-                    </p>
+                  </div>
+                </div>
+              )}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
-                      {q.options.map((op, opIdx) => (
-                        <div
-                          key={opIdx}
-                          className={`p-2.5 rounded-xl text-xs flex items-center gap-2.5 ${
-                            opIdx === q.correctAnswer
-                              ? 'bg-emerald-50 text-emerald-950 font-bold border border-emerald-300'
-                              : 'bg-slate-50 text-slate-700'
-                          }`}
-                        >
-                          <span
-                            className={`w-5 h-5 rounded-full text-[10px] flex items-center justify-center font-bold ${
-                              opIdx === q.correctAnswer
-                                ? 'bg-emerald-500 text-white'
-                                : 'bg-slate-200 text-slate-600'
-                            }`}
-                          >
-                            {opIdx + 1}
-                          </span>
-                          <span>{op}</span>
-                          {opIdx === q.correctAnswer && <span className="text-[10px] text-emerald-700 font-extrabold ml-auto">(সঠিক)</span>}
+              {/* ========================================================= */}
+              {/* MODAL: VIEW FULL QUESTION SET DETAILS                     */}
+              {/* ========================================================= */}
+              {selectedSetToView && (
+                <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
+                  <div className="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
+                    <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
+                      <div>
+                        <span className="text-[10px] font-black uppercase tracking-wider bg-blue-50 text-[#007bff] px-3 py-0.5 rounded-full">
+                          {selectedSetToView.category} • {selectedSetToView.subject}
+                        </span>
+                        <h3 className="font-extrabold text-slate-900 text-lg mt-1">
+                          {selectedSetToView.title}
+                        </h3>
+                        <p className="text-xs text-slate-500">
+                          মোট {selectedSetToView.questions.length}টি প্রশ্ন অন্তর্ভুক্ত
+                        </p>
+                      </div>
+                      <button onClick={() => setSelectedSetToView(null)} className="text-slate-400 hover:text-slate-700 p-1">
+                        <FaTimes size={20} />
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      {selectedSetToView.questions.map((q, qIdx) => (
+                        <div key={q.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs">
+                          <div className="font-bold text-slate-900 text-sm mb-2.5">
+                            {qIdx + 1}. {q.question}
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2.5">
+                            {q.options.map((opt, oIdx) => (
+                              <div
+                                key={oIdx}
+                                className={`p-2 rounded-xl border text-xs flex items-center gap-2 ${
+                                  oIdx === q.correctAnswer
+                                    ? 'bg-emerald-100 border-emerald-400 text-emerald-950 font-bold'
+                                    : 'bg-white border-slate-200 text-slate-700'
+                                }`}
+                              >
+                                <span className="w-5 h-5 rounded-full bg-white flex items-center justify-center font-bold text-[10px]">
+                                  {oIdx + 1}
+                                </span>
+                                <span>{opt}</span>
+                                {oIdx === q.correctAnswer && <span className="text-[10px] text-emerald-700 font-extrabold ml-auto">(সঠিক)</span>}
+                              </div>
+                            ))}
+                          </div>
+
+                          <div className="text-xs text-slate-600 bg-white p-2.5 rounded-xl border border-slate-200">
+                            <strong className="text-[#007bff]">ব্যাখ্যা: </strong> {q.explanation}
+                          </div>
                         </div>
                       ))}
                     </div>
 
-                    <div className="text-xs text-slate-600 bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                      <strong className="text-[#007bff]">ব্যাখ্যা ও রেফারেন্স: </strong>
-                      {q.explanation}
+                    <div className="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+                      <button
+                        onClick={() => setSelectedSetToView(null)}
+                        className="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl"
+                      >
+                        বন্ধ করুন
+                      </button>
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
 
-              {/* Add/Edit Question Modal */}
+              {/* ========================================================= */}
+              {/* MODAL: ATTACH QUESTION SET TO AN EXAM                     */}
+              {/* ========================================================= */}
+              {isAttachExamModalOpen && setTargetForExam && (
+                <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                  <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+                    <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+                      <h3 className="font-bold text-slate-900 text-base">পরীক্ষায় প্রশ্ন সেট যুক্ত করুন</h3>
+                      <button onClick={() => setIsAttachExamModalOpen(false)} className="text-slate-400 hover:text-slate-700">
+                        <FaTimes size={18} />
+                      </button>
+                    </div>
+
+                    <div className="mb-4 p-3.5 bg-blue-50 rounded-2xl border border-blue-100 text-xs">
+                      <span className="text-slate-500 block mb-0.5">নির্বাচিত সেট:</span>
+                      <strong className="text-slate-900 block text-sm">{setTargetForExam.title}</strong>
+                      <span className="text-[#007bff] font-bold mt-1 block">
+                        মোট প্রশ্ন: {setTargetForExam.questions.length}টি
+                      </span>
+                    </div>
+
+                    <div className="space-y-3 mb-5">
+                      <label className="block text-xs font-bold text-slate-700">
+                        কোন পরীক্ষায় এই সেটটি যুক্ত করবেন?
+                      </label>
+                      <select
+                        value={targetExamIdForAttach}
+                        onChange={(e) => setTargetExamIdForAttach(e.target.value)}
+                        className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold"
+                      >
+                        {examsList.map((ex) => (
+                          <option key={ex.id} value={ex.id}>
+                            {ex.title} ({ex.batchName})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => setIsAttachExamModalOpen(false)}
+                        className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold"
+                      >
+                        বাতিল
+                      </button>
+                      <button
+                        onClick={handleAttachSetToExam}
+                        className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow"
+                      >
+                        সংযুক্ত নিশ্চিত করুন
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Single Question Add/Edit Modal */}
               {isAddQuestionOpen && (
                 <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
                   <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
@@ -2397,6 +3653,8 @@ export default function AdminPage() {
                             onChange={(e) => setNewQSubject(e.target.value)}
                             className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs"
                           >
+                            <option value="বিসিএস ও সাধারণ প্রস্তুতি">বিসিএস ও সাধারণ প্রস্তুতি</option>
+                            <option value="প্রাইমারি ও মডেল টেস্ট">প্রাইমারি ও মডেল টেস্ট</option>
                             <option value="বাংলা সাহিত্য ও ব্যাকরণ">বাংলা সাহিত্য ও ব্যাকরণ</option>
                             <option value="ইংরেজি ব্যাকরণ ও সাহিত্য">ইংরেজি ব্যাকরণ ও সাহিত্য</option>
                             <option value="গণিত ও মানসিক দক্ষতা">গণিত ও মানসিক দক্ষতা</option>
@@ -2516,7 +3774,7 @@ export default function AdminPage() {
           )}
 
           {/* ========================================================= */}
-          {/* TAB 6: RESULTS & LIVE MERIT LIST (NEW DEDICATED TAB)     */}
+          {/* TAB 6: RESULTS & LIVE MERIT LIST                          */}
           {/* ========================================================= */}
           {activeTab === 'results' && (
             <div className="space-y-5">
@@ -2558,7 +3816,7 @@ export default function AdminPage() {
                     a.href = url;
                     a.download = `exam-seba-merit-list-${Date.now()}.csv`;
                     a.click();
-                    showToast(isBn ? 'মেধা তালিকা CSV ডাউনলোড শুরু হয়েছে!' : 'Merit List CSV downloaded!');
+                    showToast('মেধা তালিকা CSV ডাউনলোড শুরু হয়েছে!');
                   }}
                   className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs flex items-center gap-1.5 shadow"
                 >
@@ -2782,7 +4040,7 @@ export default function AdminPage() {
               <div className="border-b border-slate-100 pb-4">
                 <h3 className="text-lg font-black text-slate-900">প্ল্যাটফর্ম সেটিংস ও ডাটাবেস ব্যাকআপ</h3>
                 <p className="text-xs text-slate-500 mt-1">
-                  সাইটের বৈশ্বিক কনফিগারেশন, নেগেটিভ মার্কিং স্ট্যান্ডার্ড ও সিস্টেম ব্যাকআপ নিয়ন্ত্রণ
+                  সাইটের বৈশ্বিক কনফিগারেশন, নেগেティブ মার্কিং স্ট্যান্ডার্ড ও সিস্টেম ব্যাকআপ নিয়ন্ত্রণ
                 </p>
               </div>
 
@@ -2809,7 +4067,7 @@ export default function AdminPage() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    ডিফল্ট নেগেটিভ মার্কিং হার (প্রতি ভুল উত্তরে)
+                    ডিফল্ট নেগেティブ মার্কিং হার (প্রতি ভুল উত্তরে)
                   </label>
                   <select
                     value={negativeMarkingValue}
@@ -2818,7 +4076,7 @@ export default function AdminPage() {
                   >
                     <option value="0.25">০.২৫ (বিসিএস ও প্রাইমারি স্ট্যান্ডার্ড)</option>
                     <option value="0.50">০.৫০ (ব্যাংক ও মন্ত্রণালয় স্ট্যান্ডার্ড)</option>
-                    <option value="0.00">০.০০ (নেগেটিভ মার্কিং নেই)</option>
+                    <option value="0.00">০.০০ (নেগেティブ মার্কিং নেই)</option>
                   </select>
                 </div>
 
