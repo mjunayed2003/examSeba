@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "npm --prefix Frontend run dev",
-    "build": "npm --prefix Frontend run build",
-    "start": "npm --prefix Frontend run start",
+    "dev": "node init && npm --prefix Frontend run dev",
+    "build": "node init && npm --prefix Frontend run build",
+    "start": "node init && npm --prefix Frontend run start",
     "lint": "npm --prefix Frontend run lint"
   }
 }

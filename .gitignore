@@ -28,7 +28,6 @@ yarn-error.log*
 
 # local env files
 .env*.local
-.env
 Frontend/.env*.local
 Frontend/.env
 
@@ -39,3 +38,4 @@ Frontend/.env
 *.tsbuildinfo
 next-env.d.ts
 Frontend/next-env.d.ts
+config.bat
